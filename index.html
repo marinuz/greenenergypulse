@@ -257,6 +257,55 @@
       animation: savings-pulse 1.2s ease-in-out 1;
       transform-origin: center;
     }
+    
+    /* Pijl-indicator voor terug naar instellingen */
+    .settings-arrow {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--primary-color);
+      color: white;
+      padding: 16px 20px;
+      border-radius: 50px;
+      box-shadow: 0 4px 12px rgba(10, 79, 163, 0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .settings-arrow.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    .settings-arrow svg {
+      animation: bounce-up 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes bounce-up {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .settings-arrow {
+        bottom: 16px;
+        right: 16px;
+        padding: 12px 16px;
+        font-size: 0.85rem;
+      }
+    }
 
     .modal-open { overflow: hidden; }
     .disclaimer-overlay {
@@ -416,8 +465,16 @@
       </div>
     </details>
 
+    <!-- Pijl naar instellingen -->
+    <div class="settings-arrow" id="settings-arrow" onclick="scrollToSettings()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="18 15 12 9 6 15"/>
+      </svg>
+      <span>Wijzig instellingen</span>
+    </div>
+
     <div class="main-grid">
-      <div class="panel input-panel">
+      <div class="panel input-panel" id="input-panel">
         <h2>Configuratie</h2>
         <input type="hidden" id="boiler-modus" value="nymo-dimmer">
 
@@ -1187,6 +1244,7 @@
 
     let confettiShown = false;
     let scrolledToResults = false;
+    let arrowShown = false;
     
     function scrollToResults() {
       // Alleen scrollen op mobiel (< 768px) en alleen de eerste keer
@@ -1200,6 +1258,36 @@
           behavior: 'smooth', 
           block: 'start'
         });
+        
+        // Toon pijl naar instellingen na scroll (alleen op mobiel en eerste keer)
+        if (!arrowShown) {
+          arrowShown = true;
+          setTimeout(() => {
+            const arrow = document.getElementById('settings-arrow');
+            if (arrow) {
+              arrow.classList.add('show');
+              // Verberg pijl na 8 seconden
+              setTimeout(() => {
+                arrow.classList.remove('show');
+              }, 8000);
+            }
+          }, 1000);
+        }
+      }
+    }
+    
+    function scrollToSettings() {
+      const inputPanel = document.getElementById('input-panel');
+      if (inputPanel) {
+        inputPanel.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start'
+        });
+      }
+      // Verberg pijl meteen na klik
+      const arrow = document.getElementById('settings-arrow');
+      if (arrow) {
+        arrow.classList.remove('show');
       }
     }
     
