@@ -237,6 +237,86 @@
       h1 { font-size: 2rem; } h1 + p { font-size: 1rem; }
       .panel { padding: 25px; }
     }
+
+    @media (max-width: 768px) {
+      body { padding: 1rem; }
+      .panel { padding: 20px; border-radius: 16px; }
+      .layout-container { gap: 24px; }
+      
+      h1 { font-size: 1.75rem; }
+      h2 { font-size: 1.4rem; margin-bottom: 20px; }
+      h3 { font-size: 0.9rem; margin-top: 20px; }
+      
+      .hero-header { flex-direction: column; text-align: center; gap: 16px; }
+      .hero-header h1 { text-align: center; }
+      .logo-wrap img { max-height: 50px; }
+      
+      .summary-section { grid-template-columns: 1fr; gap: 16px; }
+      .summary-box { min-height: 140px; padding: 16px; }
+      .summary-box .value { font-size: 1.8rem; }
+      
+      .tab-nav { 
+        overflow-x: auto; 
+        -webkit-overflow-scrolling: touch;
+        gap: 4px;
+        flex-wrap: nowrap;
+      }
+      .tab { 
+        padding: 10px 16px; 
+        font-size: 0.9rem;
+        white-space: nowrap;
+      }
+      
+      .collapse-panel summary { padding: 16px 20px; }
+      .collapse-panel .collapse-content { padding: 0 20px 20px 20px; }
+      
+      .calc-controls { gap: 12px; }
+      .calc-controls .input-group { flex: 1 1 100%; }
+      
+      .financial-breakdown { font-size: 0.9rem; }
+      
+      .chart-container { height: 240px; }
+      .bar-value { font-size: 0.75rem; }
+      .month-label { font-size: 0.7rem; }
+      
+      .suggestion { padding: 16px; gap: 12px; }
+      .suggestion p { font-size: 0.95rem; }
+      
+      input, select { font-size: 16px; } /* Prevents zoom on iOS */
+      
+      .tap-grid { grid-template-columns: 1fr; }
+      .nerd-metrics ul { grid-template-columns: 1fr; }
+      
+      table { font-size: 0.85rem; }
+      table th, table td { padding: 8px !important; }
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 0.75rem; }
+      .panel { padding: 16px; }
+      
+      h1 { font-size: 1.5rem; }
+      h2 { font-size: 1.2rem; }
+      
+      .summary-box .value { font-size: 1.6rem; }
+      .summary-box .label { font-size: 0.85rem; }
+      
+      .tab { padding: 8px 12px; font-size: 0.85rem; }
+      
+      .unit-toggle { flex-direction: column; }
+      .unit-option { width: 100%; text-align: center; }
+      
+      .chart-container { height: 200px; }
+      
+      .disclaimer-modal { padding: 24px; }
+      .disclaimer-modal h2 { font-size: 1.2rem; }
+      
+      table { 
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
   </style>
 </head>
 
@@ -256,10 +336,6 @@
     <div class="full-width hero-header">
       <div class="logo-wrap">
         <img src="https://assets.bettyblocks.com/8d6bac1c72cb450786e8d4254c52be68_assets/files/itho-logo-2021.svg" alt="Itho Daalderop logo">
-      </div>
-      <div>
-        
-        <p>Analyseer uw potentiële besparing en financiële winst door slim gebruik van de Green Energy Smartboiler Pulse</p>
       </div>
     </div>
 
@@ -294,7 +370,7 @@
         <h3>Zonne-installatie</h3>
         <div class="input-group">
           <label for="aantal-panelen">Aantal zonnepanelen</label>
-          <input type="number" id="aantal-panelen" placeholder="Voer aantal panelen in" oninput="simuleer()">
+          <input type="number" id="aantal-panelen" min="0" placeholder="Voer aantal panelen in" oninput="simuleer()">
         </div>
         <div class="input-group">
           <label for="installatie-jaar">Installatiejaar</label>
@@ -323,7 +399,6 @@
             <input type="checkbox" id="dwtw-actief" onchange="simuleer()">
             Itho Daalderop Douche-WTW 
           </label>
-          <p class="helper-text">Herwint 52% van de douche-energie en telt dit mee in de gasbesparing.</p>
         </div>
         <!-- Drempels blijven bestaan in code, maar zijn altijd verborgen in NYMO-modus -->
         <div id="drempel-group">
@@ -472,6 +547,7 @@
         <div class="tab-nav">
           <div class="tab active" onclick="switchTab('chart-tab')">Grafiek</div>
           <div class="tab" onclick="switchTab('table-tab')">Tabel</div>
+          <div class="tab" onclick="switchTab('projection-tab')">20-jaars Projectie</div>
         </div>
         <div id="chart-tab" class="tab-content">
           <div class="chart-container" id="chart"></div>
@@ -479,41 +555,12 @@
         <div id="table-tab" class="tab-content hidden">
           <table id="opbrengst-tabel"></table>
         </div>
+        <div id="projection-tab" class="tab-content hidden">
+          <div id="projection-content"></div>
+        </div>
       </div>
     </div>
   </div>
-
-  <details class="panel full-width calc-panel collapse-panel">
-    <summary>
-      <div class="explanation-title">
-        <span>Berekening</span>
-
-      </div>
-      <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-    </summary>
-    <div class="collapse-content">
-      <div class="calc-header-text">
-        
-      </div>
-      <div class="calc-controls">
-        <div class="input-group">
-          <label for="calc-maand">Maand</label>
-          <select id="calc-maand" onchange="handleCalcMaandChange()"></select>
-        </div>
-        <div class="input-group">
-          <label for="calc-dag">Dag</label>
-          <select id="calc-dag" onchange="updateBerekeningMoment()"></select>
-        </div>
-        <div class="input-group">
-          <label for="calc-uur">Uur</label>
-          <select id="calc-uur" onchange="updateBerekeningMoment()"></select>
-        </div>
-      </div>
-      <div id="calc-details" class="calc-details">
-        <p class="calc-note">Voer eerst een simulatie uit om de transparante berekening te bekijken.</p>
-      </div>
-    </div>
-  </details>
 
   <details class="panel full-width calc-panel collapse-panel">
     <summary>
@@ -549,7 +596,41 @@
     </div>
   </details>
 
-  <div class="panel full-width disclaimer-panel" aria-live="polite">
+  <div class="panel full-width" style="margin-top: 40px;">
+    <h2 style="margin-top: 0; margin-bottom: 30px; color: var(--primary-color);">Veelgestelde Vragen</h2>
+    
+    <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
+      <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-weight: 600; color: var(--primary-color);">Wat kan ik besparen met de Green Energy Pulse?</span>
+        <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
+        <p>Je besparing is afhankelijk van de juiste capaciteit (liters, afhankelijk van gezinsgrootte en gebruik), maar een gemiddeld huishouden kan jaarlijks tot meer dan tientallen euro's besparen. Voor een indicatieve berekening kunt u onze tool gebruiken.</p>
+      </div>
+    </details>
+
+    <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
+      <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-weight: 600; color: var(--primary-color);">Hoe schat ik de nodige capaciteit van mijn boiler zo correct mogelijk in?</span>
+        <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
+        <p>Itho Daalderop heeft een tool beschikbaar, de besparingstool is gratis beschikbaar, de tool helpt bij het inschatten van de besparing op jaarbasis.</p>
+      </div>
+    </details>
+
+    <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
+      <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-weight: 600; color: var(--primary-color);">Welke boiler heb ik nodig?</span>
+        <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
+        <p>Hulp bij de keuze van uw elektrische boiler: <a href="https://www.ithodaalderop.nl/nl-nl/professional/adviestool-warmtapwatertoestellen" target="_blank" style="color: var(--secondary-color); text-decoration: underline;">Online link invoegen</a></p>
+      </div>
+    </details>
+  </div>
+
+  <div class="panel full-width disclaimer-panel" aria-live="polite" style="margin-top: 40px;">
     <h3 style="margin-top:0; color: var(--primary-color);">Disclaimer</h3>
     <p>
       De resultaten uit dit hulpmiddel vormen slechts een indicatie en zijn gebaseerd op aannames die mogelijk niet op uw
@@ -1018,6 +1099,93 @@
       document.querySelector(`[onclick*="'${targetId}'"]`).classList.add('active');
     }
 
+    function render20YearProjection(jaarlijkseKwhNaarBoiler, jaarlijkseBespaardGasKwh, jaarlijkseExtraGasKwh, gasprijsBasis, teruglevertarief, modus, dwtwActief) {
+      const projectionContainer = document.getElementById('projection-content');
+      if (!projectionContainer) return;
+
+      const huidigJaar = new Date().getFullYear();
+      const projectieJaren = 20;
+      let cumulatieveBesparing = 0;
+      let projectieData = [];
+
+      for (let jaar = 0; jaar < projectieJaren; jaar++) {
+        const projectieJaar = huidigJaar + jaar;
+        const gasprijsVoorJaar = berekenGasprijsVoorJaar(gasprijsBasis, projectieJaar);
+        
+        let jaarBesparing = 0;
+        
+        if (modus === 'stand-alone') {
+          const stroomprijs = parseFloat(document.getElementById('stroomprijs').value) || 0;
+          const waardeBespaardeNetstroom = jaarlijkseKwhNaarBoiler * stroomprijs;
+          const gederfdeStroominkomsten = jaarlijkseKwhNaarBoiler * teruglevertarief;
+          jaarBesparing = waardeBespaardeNetstroom - gederfdeStroominkomsten;
+        } else {
+          const bespaardGasM3ZonderDWTW = (jaarlijkseBespaardGasKwh / 0.95) / 9.77;
+          const extraGasM3DWTW = (jaarlijkseExtraGasKwh / 0.95) / 9.77;
+          const bespaardGasM3 = bespaardGasM3ZonderDWTW + extraGasM3DWTW;
+          const waardeBespaardGas = bespaardGasM3 * gasprijsVoorJaar;
+          const gederfdeStroominkomsten = jaarlijkseKwhNaarBoiler * teruglevertarief;
+          jaarBesparing = waardeBespaardGas - gederfdeStroominkomsten;
+        }
+        
+        cumulatieveBesparing += jaarBesparing;
+        
+        projectieData.push({
+          jaar: projectieJaar,
+          jaarBesparing: jaarBesparing,
+          cumulatief: cumulatieveBesparing,
+          gasprijs: gasprijsVoorJaar
+        });
+      }
+
+      // Render tabel
+      let tableHTML = `
+        <h3>20-jaars Financiële Projectie</h3>
+        <p style="color: var(--text-light); margin-bottom: 20px;">
+          Deze projectie toont de verwachte besparing over 20 jaar, rekening houdend met de gasprijs escalatie van €${gasprijsBasis.toFixed(2)} (${huidigJaar}) naar €${GASPRIJS_ESCALATIE.eindPrijs.toFixed(2)} (${GASPRIJS_ESCALATIE.eindJaar}).
+        </p>
+        <div style="background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+          <div style="font-size: 0.9rem; color: var(--text-light); font-weight: 500; margin-bottom: 8px;">Totale besparing over 20 jaar</div>
+          <div style="font-size: 3rem; font-weight: 700; color: var(--primary-color);">€${cumulatieveBesparing.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</div>
+        </div>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+            <thead>
+              <tr style="background-color: var(--background-light); border-bottom: 2px solid var(--border-color);">
+                <th style="padding: 12px; text-align: left; font-weight: 600; color: var(--primary-color);">Jaar</th>
+                <th style="padding: 12px; text-align: right; font-weight: 600; color: var(--primary-color);">Gasprijs (€/m³)</th>
+                <th style="padding: 12px; text-align: right; font-weight: 600; color: var(--primary-color);">Jaarlijkse Besparing</th>
+                <th style="padding: 12px; text-align: right; font-weight: 600; color: var(--primary-color);">Cumulatieve Besparing</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      projectieData.forEach((data, index) => {
+        const rowStyle = index % 2 === 0 ? 'background-color: #fafcff;' : '';
+        const gasPrijsDisplay = modus === 'stand-alone' ? '-' : `€${data.gasprijs.toFixed(2)}`;
+        tableHTML += `
+          <tr style="${rowStyle}">
+            <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">${data.jaar}</td>
+            <td style="padding: 10px; text-align: right; border-bottom: 1px solid var(--border-color);">${gasPrijsDisplay}</td>
+            <td style="padding: 10px; text-align: right; font-weight: 600; color: var(--accent-color-green); border-bottom: 1px solid var(--border-color);">€${data.jaarBesparing.toFixed(2).replace('.',',')}</td>
+            <td style="padding: 10px; text-align: right; font-weight: 700; color: var(--secondary-color); border-bottom: 1px solid var(--border-color);">€${data.cumulatief.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</td>
+          </tr>
+        `;
+      });
+
+      tableHTML += `
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.85rem; color: var(--text-light);">
+          <strong>Let op:</strong> Deze projectie gaat uit van constante verbruikspatronen en zonne-opbrengst. Werkelijke resultaten kunnen afwijken door veranderingen in gedrag, installatie-efficiëntie, energieprijzen en weersomstandigheden.
+        </p>
+      `;
+
+      projectionContainer.innerHTML = tableHTML;
+    }
+
     const simuleer = debounce(() => {
       // Valideer en markeer verplichte velden
       const allFieldsValid = validateAndMarkRequiredFields();
@@ -1330,7 +1498,7 @@
 
         setAnimatedValue('gas-besparing', bespaardGasM3, formatters.m3);
         const dwtwRegel = (dwtwActief && extraGasM3DWTW > 0)
-          ? `<div><span>Extra gasbesparing DWTW (52%):</span> <span class="gain">+ €${waardeDWTWGas.toFixed(2).replace('.',',')}</span></div>`
+          ? `<div><span>Extra gasbesparing DWTW:</span> <span class="gain">+ €${waardeDWTWGas.toFixed(2).replace('.',',')}</span></div>`
           : '';
 
         breakdownHTML = `<h3>Financiële Analyse (Nymo Dimmer)</h3>
@@ -1439,6 +1607,10 @@
       }
 
       suggestionContainer.classList.remove('hidden');
+      
+      // Bereken 20-jaars projectie
+      render20YearProjection(totaalGeleverdeKwhNaarBoiler, totaalBespaardeGasKwh, extraGasBesparingKwh, gasprijsBasisPerM3, teruglevertarief, modus, dwtwActief);
+      
       updateBerekeningMoment();
     }, 250);
 
@@ -1451,5 +1623,9 @@
       simuleer();
     };
   </script>
+
+  <footer style="text-align: center; padding: 30px 20px; color: var(--text-light); font-size: 0.9rem; margin-top: 60px; border-top: 1px solid var(--border-color);">
+    <p style="margin: 0;">© 2026 Itho Daalderop. Alle rechten voorbehouden.</p>
+  </footer>
 </body>
 </html>
