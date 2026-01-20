@@ -239,6 +239,24 @@
         transform: translateY(400px) rotate(720deg);
       }
     }
+    
+    /* Puls-animatie voor besparingsbedrag */
+    @keyframes savings-pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+    
+    .pulse-savings {
+      animation: savings-pulse 1.2s ease-in-out 1;
+      transform-origin: center;
+    }
 
     .modal-open { overflow: hidden; }
     .disclaimer-overlay {
@@ -1168,6 +1186,22 @@
     }
 
     let confettiShown = false;
+    let scrolledToResults = false;
+    
+    function scrollToResults() {
+      // Alleen scrollen op mobiel (< 768px) en alleen de eerste keer
+      if (scrolledToResults) return;
+      if (window.innerWidth >= 768) return;
+      
+      scrolledToResults = true;
+      const resultsPanel = document.querySelector('.results-panel');
+      if (resultsPanel) {
+        resultsPanel.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start'
+        });
+      }
+    }
     
     function triggerConfetti() {
       if (confettiShown) return;
@@ -1704,9 +1738,20 @@
       
       setAnimatedValue('euro-besparing', nettoFinancieleWinst, formatters.euro);
       
-      // Trigger confetti bij eerste succesvolle berekening
+      // Trigger confetti, puls-animatie en scroll bij positieve besparing
       if (nettoFinancieleWinst > 0) {
         triggerConfetti();
+        
+        // Voeg puls-animatie toe aan bedrag
+        const bedragElement = document.getElementById('euro-besparing');
+        if (bedragElement) {
+          bedragElement.classList.remove('pulse-savings');
+          void bedragElement.offsetWidth; // Force reflow
+          bedragElement.classList.add('pulse-savings');
+        }
+        
+        // Scroll naar resultaten (vooral handig op mobiel)
+        setTimeout(() => scrollToResults(), 300);
       }
       
       // Toon bandbreedte als visuele balk
