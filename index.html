@@ -75,6 +75,8 @@
       border: 1px solid var(--border-color); background-color: #fff; color: var(--text-light);
       border-radius: 999px; padding: 6px 14px; font-size: 0.85rem; font-weight: 600;
       cursor: pointer; transition: all 0.2s ease-in-out;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
     .unit-option.active {
       background-color: var(--secondary-color); color: #fff; border-color: var(--secondary-color);
@@ -417,8 +419,8 @@
         <div class="input-group" id="gasprijs-group">
           <label for="gasprijs">Gasprijs (kies eenheid)</label>
           <div class="unit-toggle" id="gasprijs-unit-toggle" role="group" aria-label="Gasprijs eenheid">
-            <button type="button" class="unit-option active" data-unit="per-m3" onclick="setGasprijsUnit('per-m3')" aria-pressed="true">&euro;/m&sup3;</button>
-            <button type="button" class="unit-option" data-unit="per-kwh" onclick="setGasprijsUnit('per-kwh')" aria-pressed="false">&euro;/kWh</button>
+            <button type="button" class="unit-option active" data-unit="per-m3" onclick="setGasprijsUnit('per-m3', event)" aria-pressed="true">&euro;/m&sup3;</button>
+            <button type="button" class="unit-option" data-unit="per-kwh" onclick="setGasprijsUnit('per-kwh', event)" aria-pressed="false">&euro;/kWh</button>
           </div>
           <input type="number" id="gasprijs" step="0.01" value="1.35" oninput="simuleer()" placeholder="Voer gasprijs in">
           <input type="hidden" id="gasprijs-unit" value="per-m3">
@@ -806,7 +808,11 @@
       });
     }
 
-    function setGasprijsUnit(unit) {
+    function setGasprijsUnit(unit, event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
       const hiddenInput = document.getElementById('gasprijs-unit');
       const valueInput = document.getElementById('gasprijs');
       const unitLabel = document.getElementById('gasprijs-unit-label');
