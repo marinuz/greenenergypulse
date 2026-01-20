@@ -209,6 +209,37 @@
     .hidden { display: none !important; }
     .collapsed { max-height: 0; opacity: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; border: 0; }
 
+    /* Confetti animatie */
+    .confetti-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 100;
+    }
+    
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      opacity: 0;
+      animation: confetti-fall 3s ease-out forwards;
+    }
+    
+    @keyframes confetti-fall {
+      0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(400px) rotate(720deg);
+      }
+    }
+
     .modal-open { overflow: hidden; }
     .disclaimer-overlay {
       position: fixed; inset: 0; background: rgba(15,43,77,0.55);
@@ -469,7 +500,8 @@
         <h2>Jaarresultaat</h2>
 
         <!-- Besparing met bandbreedte in een breed kader bovenaan -->
-        <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border: 1px solid #e0e0e0;">
+        <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border: 1px solid #e0e0e0; position: relative; overflow: hidden;">
+          <div id="confetti-container" class="confetti-container"></div>
           <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
             <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary-color);">
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
@@ -1135,6 +1167,62 @@
       animateNumber(element, newValue, formatter);
     }
 
+    let confettiShown = false;
+    
+    function triggerConfetti() {
+      if (confettiShown) return;
+      confettiShown = true;
+      
+      const container = document.getElementById('confetti-container');
+      if (!container) return;
+      
+      const colors = ['#0a4fa3', '#1e7cc2', '#3dc3a8', '#ff9e43', '#FFD700', '#FF69B4', '#00CED1'];
+      const shapes = ['circle', 'square', 'triangle'];
+      
+      // Genereer 50 confetti deeltjes
+      for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          
+          const shape = shapes[Math.floor(Math.random() * shapes.length)];
+          const color = colors[Math.floor(Math.random() * colors.length)];
+          const size = Math.random() * 8 + 6;
+          const left = Math.random() * 100;
+          const delay = Math.random() * 0.5;
+          const duration = Math.random() * 1 + 2;
+          
+          if (shape === 'circle') {
+            confetti.style.borderRadius = '50%';
+          } else if (shape === 'triangle') {
+            confetti.style.width = '0';
+            confetti.style.height = '0';
+            confetti.style.borderLeft = `${size/2}px solid transparent`;
+            confetti.style.borderRight = `${size/2}px solid transparent`;
+            confetti.style.borderBottom = `${size}px solid ${color}`;
+            confetti.style.background = 'transparent';
+          }
+          
+          if (shape !== 'triangle') {
+            confetti.style.background = color;
+          }
+          
+          confetti.style.width = size + 'px';
+          confetti.style.height = size + 'px';
+          confetti.style.left = left + '%';
+          confetti.style.animationDelay = delay + 's';
+          confetti.style.animationDuration = duration + 's';
+          
+          container.appendChild(confetti);
+          
+          // Verwijder na animatie
+          setTimeout(() => {
+            confetti.remove();
+          }, (duration + delay) * 1000);
+        }, i * 30);
+      }
+    }
+
     function updateNerdMetrics(stats) {
       const list = document.getElementById('nerd-metrics');
       if (!list) return;
@@ -1615,6 +1703,11 @@
       const nettoWinstOptimistisch = nettoFinancieleWinst * efficiencyFactorOptimistisch;
       
       setAnimatedValue('euro-besparing', nettoFinancieleWinst, formatters.euro);
+      
+      // Trigger confetti bij eerste succesvolle berekening
+      if (nettoFinancieleWinst > 0) {
+        triggerConfetti();
+      }
       
       // Toon bandbreedte als visuele balk
       const rangeElement = document.getElementById('euro-besparing-range');
