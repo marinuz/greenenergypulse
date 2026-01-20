@@ -138,8 +138,8 @@
     .tab.active::after { content:''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background-color: var(--secondary-color); border-radius: 2px; }
     .tab-content { padding-top: 25px; }
 
-    .chart-container { position: relative; height: 320px; width: 100%; }
-    .bar-column { position: absolute; height: 100%; width: 8.333%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+    .chart-container { position: relative; height: 320px; width: 100%; padding-bottom: 25px; }
+    .bar-column { position: absolute; height: calc(100% - 25px); width: 8.333%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
     .bar {
       background-image: linear-gradient(to top, var(--accent-color-green), #63d4a0);
       width: 60%; transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
@@ -152,7 +152,7 @@
     }
     .bar[style*="height: 0px;"] .bar-value, .bar[style*="height: 0%;"] .bar-value { display: none; }
     .bar:not([style*="height: 0px;"]):not([style*="height: 0%;"]) .bar-value { opacity: 1; }
-    .month-label { position: absolute; bottom: -20px; width:100%; text-align:center; font-size: 0.8rem; font-weight: 500; color: var(--text-light); }
+    .month-label { position: absolute; bottom: -22px; width:100%; text-align:center; font-size: 0.8rem; font-weight: 500; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     #suggestion-container { margin-top: 30px; }
     .suggestion { display: flex; gap: 15px; align-items: flex-start; padding: 20px; border-radius: 12px; margin-top: 15px; }
@@ -277,9 +277,10 @@
       
       .financial-breakdown { font-size: 0.9rem; }
       
-      .chart-container { height: 240px; }
+      .chart-container { height: 240px; padding-bottom: 30px; }
+      .bar-column { height: calc(100% - 30px); }
       .bar-value { font-size: 0.75rem; }
-      .month-label { font-size: 0.7rem; }
+      .month-label { font-size: 0.65rem; bottom: -24px; }
       
       .suggestion { padding: 16px; gap: 12px; }
       .suggestion p { font-size: 0.95rem; }
@@ -308,7 +309,9 @@
       .unit-toggle { flex-direction: column; }
       .unit-option { width: 100%; text-align: center; }
       
-      .chart-container { height: 200px; }
+      .chart-container { height: 200px; padding-bottom: 32px; }
+      .bar-column { height: calc(100% - 32px); }
+      .month-label { font-size: 0.6rem; bottom: -26px; }
       
       .disclaimer-modal { padding: 24px; }
       .disclaimer-modal h2 { font-size: 1.2rem; }
@@ -372,7 +375,34 @@
         <h3>Zonne-installatie</h3>
         <div class="input-group">
           <label for="aantal-panelen">Aantal zonnepanelen</label>
-          <input type="number" id="aantal-panelen" min="0" placeholder="Voer aantal panelen in" oninput="simuleer()">
+          <select id="aantal-panelen" onchange="simuleer()">
+            <option value="">Selecteer aantal panelen</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+            <option value="24">24</option>
+            <option value="25">25</option>
+          </select>
         </div>
         <div class="input-group">
           <label for="installatie-jaar">Installatiejaar</label>
