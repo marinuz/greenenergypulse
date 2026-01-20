@@ -1,0 +1,1455 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Itho Daalderop Boiler Simulatie</title>
+
+  <link rel="preconnect" href="https://securemail.csngroep.nl/fmlurlsvc/?fewReq=:B:JVA0Pzs9NCh4MzwgPihnajM+PzQ+Pyh9Z2lgb3p7fGszPDlvNzo7O206PmtrOjxvODhrPzc8Njw+Oj9rPj46PTloaz46N29sNyh6Mz85OzY/Nj07Pj8of2dqMzs2RzZGZmFaPj46Pjo9Izs2RzZGZmFYPj46Pjo9KHxtfnozYyB9fmtlTmd6ZmFqb29iamt8YX4gYGIobTM7PChmamIzPg==&url=https%3a%2f%2ffonts.googleapis.com">
+  <link rel="preconnect" href="https://securemail.csngroep.nl/fmlurlsvc/?fewReq=:B:JVA0Pzs9NCh4MzwgPihnajM+PzQ+Pyh9Z2lgb3p7fGszOThrOTg9bTdvOjc5b2xvOW06Ojw8bT1rPDc+b285aDhsOzk8Pzo3Oih6Mz85OzY/Nj07Pj8of2dqMzs2RzZGZmFaPj46Pjo9Izs2RzZGZmFYPj46Pjo9KHxtfnozYyB9fmtlTmd6ZmFqb29iamt8YX4gYGIobTM7PChmamIzPg==&url=https%3a%2f%2ffonts.gstatic.com" crossorigin>
+  <link href="https://securemail.csngroep.nl/fmlurlsvc/?fewReq=:B:JVA0Pzs9NCh4MzwgPihnajM+PzQ+Pyh9Z2lgb3p7fGszajs/OTw9OTk5O2hvbW9obDxoPjlqOjk7OTdsOD1sOW8+PTY4bWtvOCh6Mz85OzY/Nj07Pj8of2dqMzs2RzZGZmFaPj46Pjo9Izs2RzZGZmFYPj46Pjo9KHxtfnozYyB9fmtlTmd6ZmFqb29iamt8YX4gYGIobTM7PChmamIzPg==&url=https%3a%2f%2ffonts.googleapis.com%2fcss2%3ffamily%3dInter%3awght%40400%3b500%3b600%3b700%26display%3dswap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #0a4fa3;
+      --secondary-color: #1e7cc2;
+      --accent-color-green: #3dc3a8;
+      --accent-color-orange: #ff9e43;
+      --accent-color-red: #d6423a;
+      --background-light: #f2f6fb;
+      --white: #ffffff;
+      --text-dark: #0f2b4d;
+      --text-light: #5c6d83;
+      --border-color: #d3deed;
+      --shadow-soft: 0 4px 6px rgba(0,0,0,0.04);
+      --shadow-medium: 0 10px 20px rgba(0,0,0,0.06);
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0; padding: 2.5rem; background-color: var(--background-light); color: var(--text-dark);
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    }
+    .layout-container { max-width: 1440px; margin: 0 auto; display: grid; gap: 40px; }
+    .main-grid { display: grid; grid-template-columns: 400px 1fr; gap: 40px; }
+    .panel { background-color: var(--white); padding: 40px; border-radius: 20px; box-shadow: var(--shadow-medium); }
+    .full-width { grid-column: 1 / -1; }
+    h1, h2, h3 { font-weight: 700; color: var(--primary-color); }
+    h1 { text-align: center; font-size: 2.5rem; letter-spacing: -1px; margin: 0; }
+    h1 + p { text-align: center; color: var(--text-light); margin-top: 10px; font-size: 1.1rem; }
+    h2 { margin-top: 0; margin-bottom: 30px; font-size: 1.6rem; }
+    h3 { margin-top: 30px; margin-bottom: 15px; font-size: 1rem; text-transform: uppercase; color: var(--text-light); letter-spacing: 0.5px; }
+
+    .explanation-block { border-left: 5px solid var(--secondary-color); padding-left: 35px; }
+    .explanation-block p, .explanation-block li { color: var(--text-light); line-height: 1.7; }
+    .explanation-block strong { color: var(--primary-color); }
+    .collapse-panel { padding: 0; overflow: hidden; }
+    .collapse-panel summary {
+      list-style: none; cursor: pointer; padding: 20px 30px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .collapse-panel summary::-webkit-details-marker { display: none; }
+    .collapse-panel summary h2 { margin: 0; font-size: 1.3rem; }
+    .collapse-panel .collapse-content { padding: 0 30px 25px 30px; }
+    .collapse-icon { transition: transform 0.2s ease; }
+    .collapse-panel[open] .collapse-icon { transform: rotate(180deg); }
+    .explanation-title { display: flex; flex-direction: column; gap: 4px; }
+    .explanation-title span { font-size: 0.8rem; letter-spacing: 0.08em; color: var(--text-light); text-transform: uppercase; }
+    .explanation-title h2 { font-size: 1.3rem; }
+
+    .input-group { margin-bottom: 20px; transition: all 0.35s ease-in-out; overflow: hidden; }
+    label { margin-bottom: 10px; font-weight: 500; font-size: 0.9rem; display: block;}
+    input, select {
+      width: 100%; box-sizing: border-box; padding: 12px 16px;
+      border: 1px solid var(--border-color); background-color: #fafcff;
+      border-radius: 10px; font-size: 1rem; transition: all 0.2s ease-in-out;
+    }
+    .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 500; }
+    .checkbox-label input { width: auto; margin: 0; }
+    .helper-text { margin: 8px 0 0; font-size: 0.85rem; color: var(--text-light); }
+    .unit-toggle { 
+      display: flex; gap: 8px; margin: 0 0 12px 0; 
+      width: 100%; flex-wrap: wrap;
+    }
+    .unit-option {
+      border: 1px solid var(--border-color); background-color: #fff; color: var(--text-light);
+      border-radius: 999px; padding: 6px 14px; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s ease-in-out;
+    }
+    .unit-option.active {
+      background-color: var(--secondary-color); color: #fff; border-color: var(--secondary-color);
+      box-shadow: 0 4px 12px rgba(30,124,194,0.25);
+    }
+    #gasprijs { 
+      margin-top: 8px; 
+      position: relative; 
+      z-index: 1;
+    }
+    input:focus, select:focus {
+      outline: none; border-color: var(--secondary-color);
+      box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.15);
+    }
+    input.invalid, select.invalid {
+      border-color: var(--accent-color-red);
+      border-width: 2px;
+      background-color: #fff5f5;
+    }
+    input.invalid:focus, select.invalid:focus {
+      border-color: var(--accent-color-red);
+      box-shadow: 0 0 0 4px rgba(214, 66, 58, 0.15);
+    }
+
+    .summary-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .summary-box {
+      background-color: var(--background-light); padding: 20px; border-radius: 16px;
+      transition: all 0.3s ease-in-out;
+      display: flex; flex-direction: column; justify-content: flex-start;
+      min-height: 160px;
+    }
+    .summary-box:hover { transform: translateY(-4px); box-shadow: var(--shadow-soft); }
+    .summary-box .label {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; color: var(--primary-color); font-weight: 600;
+      text-align: center; height: 50px; margin-bottom: auto;
+      line-height: 1.3; flex-wrap: wrap;
+    }
+    .summary-box .value {
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 1.2; text-align: center;
+      word-break: break-word;
+      margin: auto 0;
+      padding-bottom: 10px;
+    }
+    .value.euro { color: var(--secondary-color); }
+    .value.gas { color: var(--accent-color-orange); }
+    .value.kwh { color: var(--accent-color-green); }
+    .icon { width: 22px; height: 22px; flex-shrink: 0; }
+
+    .tab-nav { display: flex; border-bottom: 2px solid var(--border-color); margin-top: 40px; }
+    .tab { padding: 10px 20px; cursor: pointer; color: var(--text-light); font-weight: 600; position: relative; }
+    .tab.active { color: var(--primary-color); }
+    .tab.active::after { content:''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background-color: var(--secondary-color); border-radius: 2px; }
+    .tab-content { padding-top: 25px; }
+
+    .chart-container { position: relative; height: 320px; width: 100%; }
+    .bar-column { position: absolute; height: 100%; width: 8.333%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+    .bar {
+      background-image: linear-gradient(to top, var(--accent-color-green), #63d4a0);
+      width: 60%; transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+      border-radius: 5px 5px 0 0; position: relative;
+    }
+    .bar-value {
+      position: absolute; top: -24px; width: 100%; text-align: center;
+      font-size: 0.85rem; font-weight: 600; color: var(--primary-color);
+      opacity: 0; transition: opacity 0.3s 0.3s;
+    }
+    .bar[style*="height: 0px;"] .bar-value, .bar[style*="height: 0%;"] .bar-value { display: none; }
+    .bar:not([style*="height: 0px;"]):not([style*="height: 0%;"]) .bar-value { opacity: 1; }
+    .month-label { position: absolute; bottom: -20px; width:100%; text-align:center; font-size: 0.8rem; font-weight: 500; color: var(--text-light); }
+
+    #suggestion-container { margin-top: 30px; }
+    .suggestion { display: flex; gap: 15px; align-items: flex-start; padding: 20px; border-radius: 12px; margin-top: 15px; }
+    .suggestion.info { background-color: #eff8ff; border: 1px solid #cce7ff;}
+    .suggestion.good { background-color: #e9f9f0; border: 1px solid #c3edd5;}
+    .suggestion.warning { background-color: #fff4e5; border: 1px solid #ffd599;}
+    .suggestion .icon { flex-shrink: 0; width: 24px; height: 24px; margin-top: 2px; }
+    .suggestion p { margin: 0; color: var(--text-dark); font-weight: 500; line-height: 1.6;}
+    .suggestion strong { color: var(--primary-color); }
+
+    .financial-breakdown { font-size: 0.95rem; line-height: 1.7; }
+    .financial-breakdown div { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--border-color); }
+    .financial-breakdown div:last-child { border-bottom: none; font-weight: 600;}
+    .financial-breakdown .loss { color: var(--accent-color-red); }
+    .financial-breakdown .gain { color: var(--accent-color-green); }
+    .calc-controls { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
+    .calc-controls .input-group { flex: 1 1 160px; margin-bottom: 0; }
+    .calc-details { background-color: #fdfefe; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; }
+    .calc-details h3 { margin-top: 0; font-size: 1.1rem; color: var(--primary-color); }
+    .calc-details .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px 18px; margin: 0; padding: 0; list-style: none; }
+    .calc-row dt { font-weight: 600; color: var(--text-light); margin: 0; }
+    .calc-row dd { margin: 2px 0 0; font-weight: 600; color: var(--primary-color); }
+    .calc-note { margin-top: 15px; font-size: 0.85rem; color: var(--text-light); }
+    .calc-panel { margin-top: 30px; }
+    .calc-header-text p { margin-top: 0; margin-bottom: 25px; color: var(--text-light); }
+    .hero-header { display: flex; align-items: center; gap: 20px; }
+    .hero-header h1 { text-align: left; }
+    .hero-header p { text-align: left; }
+    .logo-wrap { display: flex; align-items: center; }
+    .logo-wrap img { max-height: 60px; width: auto; }
+    .advanced-panel { border: 1px dashed var(--border-color); border-radius: 12px; padding: 15px; margin-top: 10px; background-color: #f7fbff; }
+    .advanced-panel.collapsed { display: none; }
+    .tap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+    .tap-row { display: flex; flex-direction: column; gap: 8px; }
+    .tap-row select, .tap-row input { width: 100%; }
+    .nerd-metrics { margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px; }
+    .nerd-metrics h4 { margin: 0 0 10px; font-size: 0.95rem; text-transform: uppercase; color: var(--text-light); }
+    .nerd-metrics ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 10px; }
+    .nerd-metrics li { background-color: #eef4ff; border-radius: 10px; padding: 10px 12px; font-size: 0.9rem; color: var(--primary-color); }
+    .tap-visual { display: grid; grid-template-columns: repeat(24, minmax(4px, 1fr)); gap: 4px; align-items: end; min-height: 80px; margin-top: 15px; }
+    .tap-bar { position: relative; background: linear-gradient(180deg, rgba(30,124,194,0.9), rgba(10,79,163,0.8)); border-radius: 4px 4px 0 0; }
+    .tap-bar span { position: absolute; bottom: 100%; font-size: 0.65rem; color: var(--text-light); transform: translateY(-4px); white-space: nowrap; }
+    .temp-chart-wrapper { margin-top: 25px; }
+    .temp-chart-wrapper h4 { margin: 0 0 10px; font-size: 0.95rem; text-transform: uppercase; color: var(--text-light); }
+    .temp-chart { width: 100%; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; background: #fff; box-sizing: border-box; overflow: hidden; }
+    .temp-chart svg { width: 100%; height: 180px; display: block; }
+    .temp-chart-note { font-size: 0.8rem; color: var(--text-light); margin-top: 8px; }
+    .temp-chart-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.8rem; color: var(--text-light); margin-top: 10px; }
+    .temp-chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .temp-chart-legend .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .temp-chart-legend .dot-final { background: var(--secondary-color); }
+    .temp-chart-legend .dot-tap { background: var(--accent-color-orange); }
+
+    .hidden { display: none !important; }
+    .collapsed { max-height: 0; opacity: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; border: 0; }
+
+    .modal-open { overflow: hidden; }
+    .disclaimer-overlay {
+      position: fixed; inset: 0; background: rgba(15,43,77,0.55);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; z-index: 9999;
+    }
+    .disclaimer-modal {
+      background: var(--white); border-radius: 18px; padding: 32px;
+      max-width: 520px; width: 100%; box-shadow: var(--shadow-medium);
+      text-align: left;
+    }
+    .disclaimer-modal h2 {
+      margin-top: 0; margin-bottom: 12px; font-size: 1.4rem; color: var(--primary-color);
+    }
+    .disclaimer-modal p { color: var(--text-light); line-height: 1.6; margin-bottom: 18px; }
+    .disclaimer-modal button {
+      background: var(--secondary-color); color: var(--white);
+      border: none; border-radius: 999px; padding: 12px 28px;
+      font-weight: 600; cursor: pointer; font-size: 1rem; transition: background 0.2s ease-in-out;
+    }
+    .disclaimer-modal button:hover { background: var(--primary-color); }
+    .disclaimer-panel { background: #f9fbff; text-align: center; }
+    .disclaimer-panel p { color: var(--text-light); margin: 0; line-height: 1.7; }
+
+    @media (max-width: 1200px) {
+      body { padding: 1.5rem; }
+      .main-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 2rem; } h1 + p { font-size: 1rem; }
+      .panel { padding: 25px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="disclaimer-overlay" class="disclaimer-overlay" role="dialog" aria-modal="true" aria-labelledby="disclaimer-title">
+    <div class="disclaimer-modal">
+      <h2 id="disclaimer-title">Belangrijke disclaimer</h2>
+      <p>
+        Dit rekenmodel geeft uitsluitend een indicatie. Werkelijke opbrengsten, kosten en besparingen zijn afhankelijk
+        van uw installatie, gedrag en marktprijzen en kunnen sterk afwijken van de getoonde resultaten. U kunt hieraan
+        geen rechten ontlenen.
+      </p>
+      <button type="button" id="acknowledge-disclaimer">Ik begrijp het</button>
+    </div>
+  </div>
+  <div class="layout-container">
+    <div class="full-width hero-header">
+      <div class="logo-wrap">
+        <img src="https://assets.bettyblocks.com/8d6bac1c72cb450786e8d4254c52be68_assets/files/itho-logo-2021.svg" alt="Itho Daalderop logo">
+      </div>
+      <div>
+        
+        <p>Analyseer uw potentiële besparing en financiële winst door slim gebruik van de Green Energy Smartboiler Pulse</p>
+      </div>
+    </div>
+
+    <details class="panel full-width explanation-block collapse-panel">
+      <summary>
+        <div class="explanation-title">
+          <span>Uitleg van model</span>
+          
+        </div>
+        <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div class="collapse-content">
+        <p>
+          Deze simulatie beschrijft uitsluitend de combinatie van de Green Energy Smartboiler Pulse
+          (boiler) met de Nymo dimmer. De regeling volgt het hele jaar <strong>uur voor uur</strong> en
+          rekent door hoeveel zonne-overschot direct in de boiler verdwijnt.
+        </p>
+        <ul>
+          <li>
+            <strong>Variabele sturing:</strong> vanaf 100 W overschot wordt precies het beschikbare vermogen naar de
+            boiler gestuurd tot het ingestelde <em>max. boilervermogen</em> bereikt is.
+          </li>
+        </ul>
+      </div>
+    </details>
+
+    <div class="main-grid">
+      <div class="panel input-panel">
+        <h2>Configuratie</h2>
+        <input type="hidden" id="boiler-modus" value="nymo-dimmer">
+
+        <h3>Zonne-installatie</h3>
+        <div class="input-group">
+          <label for="aantal-panelen">Aantal zonnepanelen</label>
+          <input type="number" id="aantal-panelen" placeholder="Voer aantal panelen in" oninput="simuleer()">
+        </div>
+        <div class="input-group">
+          <label for="installatie-jaar">Installatiejaar</label>
+          <select id="installatie-jaar" onchange="simuleer()"></select>
+          <p class="helper-text" id="totaal-wp-indicator"></p>
+        </div>
+
+        <h3>Boiler &amp; Huishouden</h3>
+        <div class="input-group">
+          <label for="volume-boiler">Volume boiler</label>
+          <select id="volume-boiler" onchange="simuleer()">
+            <option value="80">80 Liter</option>
+            <option value="120" selected>120 Liter</option>
+            <option value="150">150 Liter</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="aantal-personen">Aantal personen huishouden</label>
+          <select id="aantal-personen" onchange="simuleer()">
+            <option value="" selected>Selecteer aantal personen</option>
+            <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label class="checkbox-label" for="dwtw-actief">
+            <input type="checkbox" id="dwtw-actief" onchange="simuleer()">
+            Itho Daalderop Douche-WTW 
+          </label>
+          <p class="helper-text">Herwint 52% van de douche-energie en telt dit mee in de gasbesparing.</p>
+        </div>
+        <!-- Drempels blijven bestaan in code, maar zijn altijd verborgen in NYMO-modus -->
+        <div id="drempel-group">
+          <h3>Boiler Aan/Uit Drempels</h3>
+          <div class="input-group">
+            <label for="pv-start">PV start drempel (Watt)</label>
+            <input type="number" id="pv-start" step="50" value="500" oninput="simuleer()">
+          </div>
+          <div class="input-group">
+            <label for="pv-stop">PV stop drempel (Watt)</label>
+            <input type="number" id="pv-stop" step="50" value="100" oninput="simuleer()">
+          </div>
+        </div>
+
+        <h3>Financiële Instellingen</h3>
+        <div class="input-group" id="gasprijs-group">
+          <label for="gasprijs">Gasprijs (kies eenheid)</label>
+          <div class="unit-toggle" id="gasprijs-unit-toggle" role="group" aria-label="Gasprijs eenheid">
+            <button type="button" class="unit-option active" data-unit="per-m3" onclick="setGasprijsUnit('per-m3')" aria-pressed="true">&euro;/m&sup3;</button>
+            <button type="button" class="unit-option" data-unit="per-kwh" onclick="setGasprijsUnit('per-kwh')" aria-pressed="false">&euro;/kWh</button>
+          </div>
+          <input type="number" id="gasprijs" step="0.01" value="1.35" oninput="simuleer()" placeholder="Voer gasprijs in">
+          <input type="hidden" id="gasprijs-unit" value="per-m3">
+        </div>
+        <div class="input-group collapsed" id="stroomprijs-group">
+          <label for="stroomprijs">Stroomprijs (&euro;/kWh)</label>
+          <input type="number" id="stroomprijs" step="0.01" value="0.25" oninput="simuleer()">
+        </div>
+        <div class="input-group">
+          <label for="teruglevertarief">Terugleververgoeding (&euro;/kWh)</label>
+          <input type="number" id="teruglevertarief" step="0.001" value="0.025" oninput="simuleer()">
+        </div>
+      </div>
+
+      <div class="panel results-panel">
+        <h2>Jaarresultaat</h2>
+
+        <!-- Besparing met bandbreedte in een breed kader bovenaan -->
+        <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border: 1px solid #e0e0e0;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary-color);">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v15H6.5A2.5 2.5 0 0 1 4 14.5V4A2 2 0 0 1 6 2z"></path>
+              <path d="M12 12V7H9"></path><path d="M15 12h-3"></path>
+            </svg>
+            <div>
+              <div style="font-size: 0.9rem; color: var(--text-light); font-weight: 500;">Netto Winst (door zon)</div>
+              <div id="euro-besparing" style="font-size: 2.5rem; font-weight: 700; color: var(--primary-color); line-height: 1.1;">&euro;0,00</div>
+            </div>
+          </div>
+          <div id="euro-besparing-range"></div>
+        </div>
+
+        <div class="summary-section">
+          <div class="summary-box">
+            <div class="label">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 19.5A2.5 2.5 0 0 0 19.5 17H20v-1a2 2 0 0 0-2-2H2"></path>
+                <path d="M2 9.5A2.5 2.5 0 0 1 4.5 7H8V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2h3.5A2.5 2.5 0 0 1 22 9.5V15a2 2 0 0 1-2 2H3a1 1 0 0 0-1 1z"></path>
+              </svg>
+              CO&#8322; Besparing
+            </div>
+            <div id="co2-besparing" class="value" style="color: #6e6e73;">0 kg</div>
+          </div>
+
+          <div class="summary-box">
+            <div class="label">
+              <span style="font-size: 24px; line-height: 1;">🌳</span>
+              Gelijk aan aantal bomen
+            </div>
+            <div id="co2-bomen" class="value" style="color: #34C759;">0 🌱</div>
+          </div>
+
+          <div class="summary-box">
+            <div class="label">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 6v6l4 2"></path>
+              </svg>
+              Zelfconsumptie percentage
+            </div>
+            <div id="zelfconsumptie" class="value" style="color: var(--accent-color-green);">0%</div>
+          </div>
+
+          <div class="summary-box">
+            <div class="label">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 12v.01"></path>
+                <path d="M21.05 11.23A9 9 0 0 0 12.02 3h-.04a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9a9 9 0 0 0 9-9h-9"></path>
+                <path d="M12 12v.01"></path>
+              </svg>
+              Benutte Zonne-energie
+            </div>
+            <div id="kwh-opbrengst" class="value kwh">0 kWh</div>
+          </div>
+
+          <div class="summary-box" id="avg-temp-box">
+            <div class="label">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"></path>
+              </svg>
+              Gem. Boilertemperatuur
+            </div>
+            <div id="avg-temp-value" class="value" style="color: var(--primary-color);">0,0 &deg;C</div>
+          </div>
+
+          <div class="summary-box hidden" id="gas-besparing-box">
+            <div class="label">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11.5,15.5c2.4-2,3.3-3.6,3.3-4.9a3.7,3.7,0,0,0-7.4,0c0,1.3,1,2.9,3.3,4.9Z"></path>
+                <path d="M12.2,4.6l.6-1a1,1,0,0,0-1.6-.9l-2.4,4.2c-.8,1.3-1,2.5-1,3.2a6,6,0,0,0,12,0c0-.7-.3-1.9-1-3.2L12.2,4.6Z"></path>
+              </svg>
+              Bespaard Gas
+            </div>
+            <div id="gas-besparing" class="value gas">0 m&sup3;</div>
+          </div>
+
+          <div class="summary-box hidden" id="stroomkosten-box">
+            <div class="label">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12,8V2l-3,3"></path>
+                <path d="M12,18v4l3-3"></path>
+                <path d="M9,15H2.5A1.5,1.5,0,0,1,1,13.5v-3A1.5,1.5,0,0,1,2.5,9H9"></path>
+                <path d="M15,9h6.5A1.5,1.5,0,0,1,23,10.5v3A1.5,1.5,0,0,1,21.5,15H15"></path>
+              </svg>
+              Jaarlijkse Netstroomkosten
+            </div>
+            <div id="stroomkosten-jaar" class="value euro">&euro;0,00</div>
+          </div>
+
+          <div class="summary-box hidden" id="jaarverbruik-box">
+            <div class="label">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M220,20l-4-4 4-4"></path>
+                <path d="M2,12h14"></path>
+                <path d="M12,4V20"></path>
+              </svg>
+              Totaal Jaarverbruik Boiler
+            </div>
+            <div id="jaarverbruik-boiler" class="value kwh">0 kWh</div>
+          </div>
+        </div>
+
+        <div id="suggestion-container" class="hidden"></div>
+
+        <div class="tab-nav">
+          <div class="tab active" onclick="switchTab('chart-tab')">Grafiek</div>
+          <div class="tab" onclick="switchTab('table-tab')">Tabel</div>
+        </div>
+        <div id="chart-tab" class="tab-content">
+          <div class="chart-container" id="chart"></div>
+        </div>
+        <div id="table-tab" class="tab-content hidden">
+          <table id="opbrengst-tabel"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <details class="panel full-width calc-panel collapse-panel">
+    <summary>
+      <div class="explanation-title">
+        <span>Berekening</span>
+
+      </div>
+      <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </summary>
+    <div class="collapse-content">
+      <div class="calc-header-text">
+        
+      </div>
+      <div class="calc-controls">
+        <div class="input-group">
+          <label for="calc-maand">Maand</label>
+          <select id="calc-maand" onchange="handleCalcMaandChange()"></select>
+        </div>
+        <div class="input-group">
+          <label for="calc-dag">Dag</label>
+          <select id="calc-dag" onchange="updateBerekeningMoment()"></select>
+        </div>
+        <div class="input-group">
+          <label for="calc-uur">Uur</label>
+          <select id="calc-uur" onchange="updateBerekeningMoment()"></select>
+        </div>
+      </div>
+      <div id="calc-details" class="calc-details">
+        <p class="calc-note">Voer eerst een simulatie uit om de transparante berekening te bekijken.</p>
+      </div>
+    </div>
+  </details>
+
+  <details class="panel full-width calc-panel collapse-panel">
+    <summary>
+      <div class="explanation-title">
+        <span>Advanced Tap & Nerd Modus</span>
+      </div>
+      <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </summary>
+    <div class="collapse-content">
+      <div class="input-group">
+        <label class="checkbox-label" for="advanced-modus">
+          <input type="checkbox" id="advanced-modus" onchange="toggleAdvancedPanel()">
+          Activeer advanced modus
+        </label>
+        <p class="helper-text">Gebruik tapmomenten, tapgrafiek en nerd metrics om de regeling verder te fine-tunen.</p>
+      </div>
+      <div id="advanced-panel" class="advanced-panel collapsed">
+        <p style="margin-top:0;">Stel tot drie tapmomenten per dag in. Volumes zijn liters 40 °C water voor het hele huishouden.</p>
+        <div id="tap-rows" class="tap-grid"></div>
+        <div id="tap-visual" class="tap-visual"></div>
+        <div class="nerd-metrics">
+          <h4>Nerd metrics</h4>
+          <ul id="nerd-metrics"><li>Voer een simulatie uit om extra statistieken te zien.</li></ul>
+        </div>
+        <div class="temp-chart-wrapper">
+          <h4>Boilertemperatuur per uur</h4>
+          <div id="temp-chart" class="temp-chart">
+            <p class="calc-note">Selecteer een dag in het transparantie-tab om het temperatuurprofiel te zien.</p>
+          </div>
+          <p class="temp-chart-note">Gebruik dit profiel om inzichtelijk te maken wanneer de boiler vol zit en welke uren ideaal zijn om te douchen.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <div class="panel full-width disclaimer-panel" aria-live="polite">
+    <h3 style="margin-top:0; color: var(--primary-color);">Disclaimer</h3>
+    <p>
+      De resultaten uit dit hulpmiddel vormen slechts een indicatie en zijn gebaseerd op aannames die mogelijk niet op uw
+      situatie van toepassing zijn. Werkelijke prestaties, prijzen, subsidies en besparingen kunnen aanzienlijk afwijken.
+      Gebruik dit model uitsluitend ter inspiratie; er kunnen geen rechten aan worden ontleend.
+    </p>
+    <p style="margin-top: 10px; font-size: 0.9rem;">
+      <strong>Let op:</strong> Dit model gebruikt een vast zonprofiel gebaseerd op historische data. 
+      De gasprijs loopt automatisch op van €1,35/m³ (2027) naar €1,50/m³ (2032) om de impact van ETS2 mee te nemen.
+    </p>
+  </div>
+
+  <script>
+    function openDisclaimer() {
+      const overlay = document.getElementById('disclaimer-overlay');
+      if (!overlay) return;
+      overlay.classList.remove('hidden');
+      document.body.classList.add('modal-open');
+    }
+
+    function closeDisclaimer() {
+      const overlay = document.getElementById('disclaimer-overlay');
+      if (!overlay) return;
+      overlay.classList.add('hidden');
+      document.body.classList.remove('modal-open');
+    }
+
+    function initDisclaimer() {
+      const overlay = document.getElementById('disclaimer-overlay');
+      const acknowledgeBtn = document.getElementById('acknowledge-disclaimer');
+      if (!overlay) return;
+      openDisclaimer();
+      if (acknowledgeBtn) acknowledgeBtn.addEventListener('click', closeDisclaimer);
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) closeDisclaimer();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !overlay.classList.contains('hidden')) {
+          closeDisclaimer();
+        }
+      });
+    }
+
+    const historieWp = { 2012: 250, 2013: 250, 2014: 260, 2015: 265, 2016: 270, 2017: 285, 2018: 300, 2019: 325, 2020: 360, 2021: 390, 2022: 410, 2023: 435, 2024: 450, 2025: 450, 2026: 450 },
+          stilstandverliesW = { 80: 36, 120: 50, 150: 57 },
+          dagenPerMaand = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+          maandelijkseZonVerdeling = [2.5, 4, 8, 11.5, 13.5, 14, 13, 11, 8.5, 6, 3.5, 2],
+          solarHourProfile = [0,0,0,0,0,0,0.02,0.05,0.08,0.11,0.13,0.14,0.13,0.11,0.08,0.05,0.02,0,0,0,0,0,0,0],
+          maandenNamen = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"];
+
+            const ENERGIE_PER_M3_GAS_KWH = 9.77;
+            const GAS_UNIT_LABELS = { 'per-m3': '€/m\u00b3', 'per-kwh': '€/kWh' };
+            
+            // Gasprijs escalatie instellingen (configureerbaar op achtergrond)
+            // Prijzen lopen op van startjaar naar eindjaar
+            const GASPRIJS_ESCALATIE = {
+              startJaar: 2027,
+              eindJaar: 2032,
+              startPrijs: 1.35,  // €/m³
+              eindPrijs: 1.50    // €/m³
+            };
+            
+            // Bereken gasprijs op basis van het huidige jaar
+            function berekenGasprijsVoorJaar(basisPrijs, jaar) {
+              const huidigJaar = new Date().getFullYear();
+              if (jaar < GASPRIJS_ESCALATIE.startJaar) return basisPrijs;
+              if (jaar >= GASPRIJS_ESCALATIE.eindJaar) {
+                const jaarVerschil = GASPRIJS_ESCALATIE.eindJaar - GASPRIJS_ESCALATIE.startJaar;
+                const prijsStijging = GASPRIJS_ESCALATIE.eindPrijs - GASPRIJS_ESCALATIE.startPrijs;
+                return basisPrijs + prijsStijging;
+              }
+              // Lineaire interpolatie tussen start en eind
+              const jaarVerschil = GASPRIJS_ESCALATIE.eindJaar - GASPRIJS_ESCALATIE.startJaar;
+              const prijsStijging = GASPRIJS_ESCALATIE.eindPrijs - GASPRIJS_ESCALATIE.startPrijs;
+              const jaarSindsStart = jaar - GASPRIJS_ESCALATIE.startJaar;
+              const stijgingPerJaar = prijsStijging / jaarVerschil;
+              return basisPrijs + (stijgingPerJaar * jaarSindsStart);
+            }
+
+    const jaarSelect = document.getElementById('installatie-jaar'),
+          huidigeJaar = new Date().getFullYear(),
+          maxJaar = Math.max(huidigeJaar, 2026);
+    for (let jaar = maxJaar; jaar >= 2012; jaar--) jaarSelect.add(new Option(jaar, jaar));
+    jaarSelect.value = "2026";
+
+    const calcMaandSelect = document.getElementById('calc-maand'),
+          calcDagSelect = document.getElementById('calc-dag'),
+          calcUurSelect = document.getElementById('calc-uur'),
+          calcDetails = document.getElementById('calc-details');
+
+    const TAP_ROW_DEFAULTS = [
+      { hour: 7, volume: 60 },
+      { hour: 18, volume: 40 },
+      { hour: 22, volume: 30 }
+    ];
+
+    function buildHourOptions(selected) {
+      return Array.from({ length: 24 }, (_, uur) => {
+        const label = `${uur.toString().padStart(2,'0')}:00`;
+        const isSelected = uur === selected ? 'selected' : '';
+        return `<option value="${uur}" ${isSelected}>${label}</option>`;
+      }).join('');
+    }
+
+    function initTapRows() {
+      const container = document.getElementById('tap-rows');
+      if (!container) return;
+      container.innerHTML = TAP_ROW_DEFAULTS.map((row, index) => `
+        <div class="tap-row" data-index="${index}">
+          <strong>Tapmoment ${index + 1}</strong>
+          <label for="tap-hour-${index}">Uur</label>
+          <select id="tap-hour-${index}" class="tap-hour" onchange="simuleer()">
+            ${buildHourOptions(row.hour)}
+          </select>
+          <label for="tap-volume-${index}">Volume (L 40 °C)</label>
+          <input type="number" id="tap-volume-${index}" class="tap-volume" min="0" step="5" value="${row.volume}" oninput="simuleer()">
+        </div>
+      `).join('');
+    }
+
+    function toggleAdvancedPanel(skipSim = false) {
+      const panel = document.getElementById('advanced-panel');
+      const checkbox = document.getElementById('advanced-modus');
+      if (!panel || !checkbox) return;
+      panel.classList.toggle('collapsed', !checkbox.checked);
+      if (!checkbox.checked) renderTapVisual(null);
+      if (!skipSim) simuleer();
+    }
+
+    function collectTapMomenten() {
+      const checkbox = document.getElementById('advanced-modus');
+      if (!checkbox || !checkbox.checked) return [];
+      const rows = document.querySelectorAll('#tap-rows .tap-row');
+      const momenten = [];
+      rows.forEach(row => {
+        const hourSelect = row.querySelector('.tap-hour');
+        const volumeInput = row.querySelector('.tap-volume');
+        const uur = hourSelect ? parseInt(hourSelect.value, 10) : 0;
+        const volume = volumeInput ? parseFloat(volumeInput.value) || 0 : 0;
+        if (volume > 0 && uur >= 0 && uur <= 23) {
+          momenten.push({ hour: uur, volume });
+        }
+      });
+      return momenten.sort((a, b) => a.hour - b.hour);
+    }
+
+    function renderTapVisual(profiel) {
+      const visual = document.getElementById('tap-visual');
+      if (!visual) return;
+      if (!profiel) {
+        visual.innerHTML = '<p class="calc-note">Activeer de advanced modus om het tapprofiel te visualiseren.</p>';
+        return;
+      }
+      const maxVolume = Math.max(...profiel, 0);
+      if (maxVolume === 0) {
+        visual.innerHTML = '<p class="calc-note">Stel ten minste één tapmoment in om de grafiek te vullen.</p>';
+        return;
+      }
+      visual.innerHTML = profiel.map((volume, uur) => {
+        const hoogte = (volume / maxVolume) * 100;
+        const label = volume > 0 ? `<span>${uur}u</span>` : '';
+        return `<div class="tap-bar" style="height:${hoogte}%" title="${volume.toFixed(0)} L">${label}</div>`;
+      }).join('');
+    }
+
+    function updateGasprijsToggleButtons(activeUnit) {
+      const buttons = document.querySelectorAll('#gasprijs-unit-toggle .unit-option');
+      if (!buttons.length) return;
+      buttons.forEach(button => {
+        const isActive = button.dataset.unit === activeUnit;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+      });
+    }
+
+    function setGasprijsUnit(unit) {
+      const hiddenInput = document.getElementById('gasprijs-unit');
+      const valueInput = document.getElementById('gasprijs');
+      const unitLabel = document.getElementById('gasprijs-unit-label');
+      if (!hiddenInput || !valueInput || !GAS_UNIT_LABELS[unit]) return;
+      const previousUnit = hiddenInput.value || 'per-m3';
+      if (unit === previousUnit) return;
+
+      const currentValue = parseFloat(valueInput.value) || 0;
+      let convertedValue = currentValue;
+
+      if (unit === 'per-kwh' && previousUnit === 'per-m3') {
+        convertedValue = currentValue / ENERGIE_PER_M3_GAS_KWH;
+      } else if (unit === 'per-m3' && previousUnit === 'per-kwh') {
+        convertedValue = currentValue * ENERGIE_PER_M3_GAS_KWH;
+      }
+
+      hiddenInput.value = unit;
+      valueInput.step = unit === 'per-kwh' ? '0.001' : '0.01';
+      valueInput.value = Number.isFinite(convertedValue)
+        ? convertedValue.toFixed(unit === 'per-kwh' ? 3 : 2)
+        : '';
+      if (unitLabel) unitLabel.textContent = `(${GAS_UNIT_LABELS[unit]})`;
+      updateGasprijsToggleButtons(unit);
+      simuleer();
+    }
+
+    function initGasprijsUnitControls() {
+      const hiddenInput = document.getElementById('gasprijs-unit');
+      const unitLabel = document.getElementById('gasprijs-unit-label');
+      const valueInput = document.getElementById('gasprijs');
+      if (!hiddenInput || !valueInput) return;
+      const currentUnit = hiddenInput.value || 'per-m3';
+      if (unitLabel) unitLabel.textContent = `(${GAS_UNIT_LABELS[currentUnit]})`;
+      valueInput.step = currentUnit === 'per-kwh' ? '0.001' : '0.01';
+      updateGasprijsToggleButtons(currentUnit);
+    }
+
+    function renderTemperatureChart(maandIndex, dagIndex) {
+      const chart = document.getElementById('temp-chart');
+      if (!chart) return;
+      if (!berekeningMomenten || maandIndex === null || dagIndex === null) {
+        chart.innerHTML = '<p class="calc-note">Voer een simulatie uit en selecteer een dag om het temperatuurprofiel te bekijken.</p>';
+        return;
+      }
+
+      const dagArray = berekeningMomenten[maandIndex];
+      const uurArray = dagArray ? dagArray[dagIndex] : null;
+      if (!uurArray) {
+        chart.innerHTML = '<p class="calc-note">Geen temperatuurdata beschikbaar voor deze dag.</p>';
+        return;
+      }
+
+      const tempsNaTap = uurArray.map(item => item ? (typeof item.boilerTempNaTapC === 'number' ? item.boilerTempNaTapC : item.boilerTempNaC) : null);
+      const tempsEindeUur = uurArray.map(item => item ? item.boilerTempNaC : null);
+      const validTemps = tempsNaTap.concat(tempsEindeUur).filter(t => typeof t === 'number');
+      if (validTemps.length === 0) {
+        chart.innerHTML = '<p class="calc-note">Geen temperatuurdata beschikbaar voor deze dag.</p>';
+        return;
+      }
+
+      const minTemp = Math.min(...validTemps);
+      const maxTemp = Math.max(...validTemps);
+      const roundedMin = Math.floor(minTemp / 5) * 5;
+      const roundedMax = Math.ceil(maxTemp / 5) * 5;
+      const tempRange = Math.max(roundedMax - roundedMin, 5);
+
+      const containerWidth = chart.clientWidth || 0;
+      const width = Math.max(containerWidth - 24, 320);
+      const height = 180;
+      const paddingLeft = 50;
+      const paddingRight = 16;
+      const paddingTop = 10;
+      const paddingBottom = 28;
+      const usableWidth = width - paddingLeft - paddingRight;
+      const usableHeight = height - paddingTop - paddingBottom;
+
+      const computedStyles = getComputedStyle(document.documentElement);
+      const textColor = computedStyles.getPropertyValue('--text-light').trim() || '#5c6d83';
+      const borderColor = computedStyles.getPropertyValue('--border-color').trim() || '#d3deed';
+      const eindLijnKleur = computedStyles.getPropertyValue('--secondary-color').trim() || '#1e7cc2';
+      const tapLijnKleur = computedStyles.getPropertyValue('--accent-color-orange').trim() || '#ff9e43';
+
+      const buildPoints = (temps) => temps.map((temp, index) => {
+        if (typeof temp !== 'number') return null;
+        const x = paddingLeft + (index / 23) * usableWidth;
+        const y = height - paddingBottom - ((temp - roundedMin) / tempRange) * usableHeight;
+        return `${x},${y}`;
+      }).filter(Boolean).join(' ');
+
+      const eindPoints = buildPoints(tempsEindeUur);
+      const tapPoints = buildPoints(tempsNaTap);
+
+      const xLabels = [0, 6, 12, 18, 23].map(hour => {
+        const x = paddingLeft + (hour / 23) * usableWidth;
+        return `<text x="${x}" y="${height - 6}" font-size="10" text-anchor="middle" fill="${textColor}">${hour}u</text>`;
+      }).join('');
+
+      const yTicks = Array.from({ length: 5 }, (_, i) => roundedMin + (tempRange / 4) * i);
+      const yLabels = yTicks.map(value => {
+        const y = height - paddingBottom - ((value - roundedMin) / tempRange) * usableHeight;
+        return `
+          <line x1="${paddingLeft}" x2="${width - paddingRight}" y1="${y}" y2="${y}" stroke="${borderColor}" stroke-dasharray="2,4" />
+          <text x="${paddingLeft - 8}" y="${y + 3}" font-size="10" text-anchor="end" fill="${textColor}">${value.toFixed(0)} °C</text>
+        `;
+      }).join('');
+
+      const legendItems = [];
+      if (eindPoints) legendItems.push('<span><span class="dot dot-final"></span>Eind van het uur</span>');
+      if (tapPoints) legendItems.push('<span><span class="dot dot-tap"></span>Direct na tapmoment</span>');
+      const legendHtml = legendItems.length ? `<div class="temp-chart-legend">${legendItems.join('')}</div>` : '';
+
+      chart.innerHTML = `
+        <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+          ${yLabels}
+          ${tapPoints ? `<polyline fill="none" stroke="${tapLijnKleur}" stroke-width="1.8" stroke-dasharray="4 3" points="${tapPoints}" />` : ''}
+          ${eindPoints ? `<polyline fill="none" stroke="${eindLijnKleur}" stroke-width="2.4" points="${eindPoints}" />` : ''}
+          ${xLabels}
+        </svg>
+        ${legendHtml}
+      `;
+    }
+
+    let berekeningMomenten = null;
+
+    function initBerekeningSelectors() {
+      if (!calcMaandSelect || !calcDagSelect || !calcUurSelect) return;
+      calcMaandSelect.innerHTML = maandenNamen.map((naam, index) => `<option value="${index}">${naam}</option>`).join('');
+      calcUurSelect.innerHTML = Array.from({ length: 24 }, (_, uur) => {
+        const label = `${uur.toString().padStart(2,'0')}:00`;
+        return `<option value="${uur}">${label}</option>`;
+      }).join('');
+      updateCalcDagOptions();
+    }
+
+    function updateCalcDagOptions() {
+      if (!calcDagSelect) return;
+      const maandIndex = parseInt(calcMaandSelect.value || 0, 10);
+      const aantalDagen = dagenPerMaand[maandIndex] || 31;
+      const huidigeDag = parseInt(calcDagSelect.value || 0, 10);
+      calcDagSelect.innerHTML = Array.from({ length: aantalDagen }, (_, dag) => `<option value="${dag}">${dag + 1}</option>`).join('');
+      if (huidigeDag < aantalDagen) {
+        calcDagSelect.value = huidigeDag;
+      }
+    }
+
+    function handleCalcMaandChange() {
+      updateCalcDagOptions();
+      updateBerekeningMoment();
+    }
+
+    function updateBerekeningMoment() {
+      if (!calcDetails) return;
+      if (!berekeningMomenten) {
+        calcDetails.innerHTML = '<p class="calc-note">Voer eerst een simulatie uit om de berekening te kunnen tonen.</p>';
+        renderTemperatureChart(null, null);
+        return;
+      }
+
+      const maandIndex = parseInt(calcMaandSelect.value || 0, 10);
+      const dagIndex = parseInt(calcDagSelect.value || 0, 10);
+      const uurIndex = parseInt(calcUurSelect.value || 0, 10);
+      const dagArray = berekeningMomenten[maandIndex];
+      const uurData = dagArray && dagArray[dagIndex] ? dagArray[dagIndex][uurIndex] : null;
+
+      if (!uurData) {
+        calcDetails.innerHTML = '<p class="calc-note">Geen data beschikbaar voor dit moment in de huidige configuratie.</p>';
+        renderTemperatureChart(maandIndex, dagIndex);
+        return;
+      }
+
+      const datumLabel = `${dagIndex + 1} ${maandenNamen[maandIndex]} - ${uurIndex.toString().padStart(2,'0')}:00`;
+      const formatWatt = (value) => `${Math.round(value)} W`;
+      const formatKwh = (value) => `${value.toFixed(2).replace('.',',')} kWh`;
+      const formatTemp = (value) => `${value.toFixed(1).replace('.',',')} °C`;
+
+      calcDetails.innerHTML = `
+        <h3>${datumLabel}</h3>
+        <dl class="calc-grid">
+          <div class="calc-row"><dt>Zonnevermogen</dt><dd>${formatWatt(uurData.zonneVermogenW)}</dd></div>
+          <div class="calc-row"><dt>Basisverbruik</dt><dd>${formatWatt(uurData.basisVerbruikW)}</dd></div>
+          <div class="calc-row"><dt>Overschot naar net</dt><dd>${formatWatt(uurData.overschotW)}</dd></div>
+          <div class="calc-row"><dt>Vermogen naar boiler</dt><dd>${formatWatt(uurData.vermogenNaarBoilerW)}</dd></div>
+          <div class="calc-row"><dt>Energie naar boiler</dt><dd>${formatKwh(uurData.energieNaarBoilerKwh)}</dd></div>
+          <div class="calc-row"><dt>Boilertemperatuur (voor)</dt><dd>${formatTemp(uurData.boilerTempVoorC)}</dd></div>
+          <div class="calc-row"><dt>Boilertemperatuur (na tap)</dt><dd>${formatTemp((uurData.boilerTempNaTapC ?? uurData.boilerTempNaC))}</dd></div>
+          <div class="calc-row"><dt>Boilertemperatuur (na)</dt><dd>${formatTemp(uurData.boilerTempNaC)}</dd></div>
+          <div class="calc-row"><dt>Douche-energie</dt><dd>${formatKwh(uurData.doucheEnergieKwh)}</dd></div>
+          <div class="calc-row"><dt>DWTW herwinning</dt><dd>${formatKwh(uurData.dwtwHerwinningKwh)}</dd></div>
+        </dl>
+        <p class="calc-note">Doucheverbruik wordt aan het begin van iedere dag verrekend; dezelfde waarde geldt voor alle uren van die dag.</p>
+      `;
+      renderTemperatureChart(maandIndex, dagIndex);
+    }
+
+    const formatters = {
+      euro: (value) => {
+        const amount = Math.abs(value).toFixed(2).replace('.', ',');
+        return value < 0 ? `-€${amount}` : `€${amount}`;
+      },
+      kg: (value) => `${value.toFixed(0)} kg`,
+      kwh: (value) => `${value.toFixed(0)} kWh`,
+      temp: (value) => `${value.toFixed(1).replace('.', ',')} °C`,
+      m3: (value) => `${value.toFixed(0)} m³`,
+      bomen: (value) => `${value.toFixed(1).replace('.', ',')}`,
+      percentage: (value) => `${value.toFixed(1).replace('.', ',')}%`
+    };
+
+    function animateNumber(element, targetValue, formatter) {
+      if (!element) return;
+      const duration = 700;
+      const startValue = isFinite(parseFloat(element.dataset.value)) ? parseFloat(element.dataset.value) : targetValue;
+      const startTime = performance.now();
+
+      function frame(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const currentValue = startValue + (targetValue - startValue) * progress;
+        element.textContent = formatter(currentValue);
+        if (progress < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          element.dataset.value = targetValue;
+        }
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    function setAnimatedValue(elementId, newValue, formatter) {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+      animateNumber(element, newValue, formatter);
+    }
+
+    function updateNerdMetrics(stats) {
+      const list = document.getElementById('nerd-metrics');
+      if (!list) return;
+      if (!stats) {
+        list.innerHTML = '<li>Voer een simulatie uit om extra statistieken te zien.</li>';
+        return;
+      }
+      const avgTap = stats.tapEvents > 0 ? (stats.tapEnergyTotalKwh / stats.tapEvents).toFixed(2).replace('.',',') : '0,00';
+      list.innerHTML = `
+        <li><strong>Maximaal PV-vermogen</strong><br>${Math.round(stats.maxVermogenW)} W</li>
+        <li><strong>Uren op 85 °C</strong><br>${stats.urenOpSetpoint}</li>
+        <li><strong>Tapmomenten verwerkt</strong><br>${stats.tapEvents}</li>
+        <li><strong>Gem. energie per tap</strong><br>${avgTap} kWh</li>
+      `;
+    }
+
+    function validateAndMarkRequiredFields() {
+      const aantalPanelenInput = document.getElementById('aantal-panelen');
+      const aantalPersonenInput = document.getElementById('aantal-personen');
+      
+      let allValid = true;
+      
+      // Check aantal panelen - moet een getal zijn groter dan 0
+      const panelenValue = parseFloat(aantalPanelenInput.value);
+      if (isNaN(panelenValue) || panelenValue <= 0) {
+        aantalPanelenInput.classList.add('invalid');
+        allValid = false;
+      } else {
+        aantalPanelenInput.classList.remove('invalid');
+      }
+      
+      // Check aantal personen - moet geselecteerd zijn (niet leeg)
+      const personenValue = parseFloat(aantalPersonenInput.value);
+      if (!aantalPersonenInput.value || aantalPersonenInput.value === '' || isNaN(personenValue) || personenValue <= 0) {
+        aantalPersonenInput.classList.add('invalid');
+        allValid = false;
+      } else {
+        aantalPersonenInput.classList.remove('invalid');
+      }
+      
+      return allValid;
+    }
+
+    function debounce(func, wait) {
+      let timeout;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    function switchTab(targetId) {
+      document.querySelectorAll('.tab-content, .tab').forEach(el => el.classList.remove('active','hidden'));
+      document.querySelectorAll(`.tab-content:not(#${targetId}), .tab:not([onclick*="'${targetId}'"])`)
+        .forEach(el => el.classList.contains('tab-content') ? el.classList.add('hidden') : null);
+      document.getElementById(targetId).classList.remove('hidden');
+      document.querySelector(`[onclick*="'${targetId}'"]`).classList.add('active');
+    }
+
+    const simuleer = debounce(() => {
+      // Valideer en markeer verplichte velden
+      const allFieldsValid = validateAndMarkRequiredFields();
+      
+      if (!allFieldsValid) {
+        // Toon lege state
+        document.getElementById('euro-besparing').textContent = '€0,00';
+        document.getElementById('co2-besparing').textContent = '0 kg';
+        document.getElementById('co2-bomen').textContent = '0';
+        document.getElementById('kwh-opbrengst').textContent = '0 kWh';
+        document.getElementById('avg-temp-value').textContent = '0,0 °C';
+        document.getElementById('zelfconsumptie').textContent = '0%';
+        const suggestionContainer = document.getElementById('suggestion-container');
+        suggestionContainer.innerHTML = '<div class="suggestion info"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4A90E2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><div><p>Vul de <strong style="color: var(--accent-color-red);">rood gemarkeerde velden</strong> in om de berekening te starten.</p></div></div>';
+        suggestionContainer.classList.remove('hidden');
+        return;
+      }
+      
+      // Realistisch huishoudelijk verbruiksprofiel per uur (W)
+      // Hoger in ochtend (6-9u) en avond (17-23u), lager overdag
+      const BASISVERBRUIK_PROFIEL_W = [
+        200, 180, 170, 160, 160, 180,  // 0-5u: nacht (laag)
+        300, 450, 520, 480, 400, 350,  // 6-11u: ochtendpiek
+        330, 320, 310, 300, 320, 380,  // 12-17u: middag
+        450, 480, 500, 520, 480, 400   // 18-23u: avondpiek
+      ];
+      
+      const MAX_BOILER_VERMOGEN_W = 3000,
+            SPECIFIEKE_WARMTE_KWH_L_C = 0.001163,
+            WATERVERBRUIK_L_PP_PD_40C = 45,  // 45L per persoon per dag (Nederlands gemiddelde)
+            DOELTEMP_C = 40,
+            BOILER_DOELTEMP_C = 85,
+            RENDEMENT_CV_KETEL = 0.95,  // 95% voor moderne HR-ketels
+            OMREKENFACTOR_KLIMAAT = 0.85,
+        HOURS_IN_YEAR = 8760,
+        DWTW_RENDEMENT = 0.52;
+
+      const STANDALONE_BASTEMP_C = 55,
+            CO2_PER_M3_GAS = 2.134,
+            CO2_PER_KWH_STROOM = 0.328,
+            NYMO_MIN_POWER_W = 100,
+            LEGIONELLA_TEMP_C = 60,  // Minimaal 60°C voor legionella preventie
+            LEGIONELLA_INTERVAL_DAYS = 7,  // Elke 7 dagen opwarmen naar 60°C
+            KOUDWATER_TEMP_ZOMER_C = 15,  // Leidingwater temp zomer
+            KOUDWATER_TEMP_WINTER_C = 10;  // Leidingwater temp winter
+
+      // Inlezen van alle waarden
+      const modus = document.getElementById('boiler-modus').value; // altijd 'nymo-dimmer'
+      const aantalPanelen = parseFloat(document.getElementById('aantal-panelen').value),
+            installatieJaar = document.getElementById('installatie-jaar').value,
+            aantalPersonen = parseFloat(document.getElementById('aantal-personen').value),
+            boilerVolume = parseFloat(document.getElementById('volume-boiler').value) || 0,
+        gasprijsInputValue = parseFloat(document.getElementById('gasprijs').value) || 0,
+        gasprijsUnitElement = document.getElementById('gasprijs-unit'),
+        gasprijsUnit = gasprijsUnitElement ? gasprijsUnitElement.value : 'per-m3',
+        gasprijsBasisPerM3 = gasprijsUnit === 'per-kwh' ? gasprijsInputValue * ENERGIE_PER_M3_GAS_KWH : gasprijsInputValue,
+        huidigJaar = new Date().getFullYear(),
+        gasprijsPerM3 = berekenGasprijsVoorJaar(gasprijsBasisPerM3, huidigJaar),
+            stroomprijs = parseFloat(document.getElementById('stroomprijs').value) || 0,
+        teruglevertarief = parseFloat(document.getElementById('teruglevertarief').value),
+        dwtwActief = document.getElementById('dwtw-actief').checked,
+        advancedActief = document.getElementById('advanced-modus') ? document.getElementById('advanced-modus').checked : false;
+
+      const pvStart = parseFloat(document.getElementById('pv-start').value) || 0,
+        pvStop = parseFloat(document.getElementById('pv-stop').value) || 0,
+        boilerMaxPowerW = MAX_BOILER_VERMOGEN_W;
+
+      const tapMomenten = (advancedActief) ? collectTapMomenten() : [];
+      const tapProfielPerUur = (advancedActief && tapMomenten.length > 0)
+        ? tapMomenten.reduce((profiel, moment) => {
+            profiel[moment.hour] = (profiel[moment.hour] || 0) + moment.volume;
+            return profiel;
+          }, Array(24).fill(0))
+        : null;
+      const standaardLiters40C = WATERVERBRUIK_L_PP_PD_40C * aantalPersonen;
+      renderTapVisual(tapProfielPerUur);
+
+      // --- Dynamische UI ---
+      document.getElementById('gasprijs-group').classList.toggle('collapsed', modus === 'stand-alone');
+      document.getElementById('stroomprijs-group').classList.toggle('collapsed', modus !== 'stand-alone');
+      document.getElementById('drempel-group').classList.toggle('collapsed', modus === 'nymo-dimmer');
+
+      const wpIndicatorElement = document.getElementById('totaal-wp-indicator');
+
+      const paneelWp = historieWp[installatieJaar] || 450; // Default to 450 Wp if year not found
+      const totaalWp = paneelWp * aantalPanelen,
+            jaarlijkseOpbrengstKWh = totaalWp * OMREKENFACTOR_KLIMAAT;
+
+      if (wpIndicatorElement) {
+        if (paneelWp > 0 && aantalPanelen > 0) {
+          const productText = `${aantalPanelen} panelen × ${paneelWp} Wp = ${totaalWp.toLocaleString('nl-NL')} Wp`;
+          wpIndicatorElement.textContent = productText;
+        } else {
+          wpIndicatorElement.textContent = '';
+        }
+      }
+
+          berekeningMomenten = dagenPerMaand.map(dagen => Array.from({ length: dagen }, () => Array(24).fill(null)));
+
+          let boilerTemp = 10,
+          totaalBespaardeGasKwh = 0,
+          totaalDoucheEnergieKwh = 0,
+          totaalNetstroomVerbruikKwh = 0,
+          totalTempSum = 0,
+          maandData = Array(12).fill(0).map(() => ({zonOverschot: 0, naarBoiler: 0}));
+
+      let suggestions = [];
+
+      const literPerDouche = 60;
+      let tempVoorCheck = (modus === 'stand-alone') ? STANDALONE_BASTEMP_C : BOILER_DOELTEMP_C;
+      const capaciteitLiter40C = (boilerVolume * (tempVoorCheck - 10)) / (DOELTEMP_C - 10);
+      const maxPersonen = Math.floor(capaciteitLiter40C / literPerDouche);
+
+      if (aantalPersonen > maxPersonen) {
+        const adviesVolume = aantalPersonen <= 2 ? 80 : (aantalPersonen <= 3 ? 120 : 150);
+        suggestions.push({
+          type: 'warning',
+          text: `Een <strong>${boilerVolume}L</strong> boiler levert ca. <strong>${maxPersonen} douchebeurt(en)</strong>. Dit is mogelijk te weinig voor <strong>${aantalPersonen} personen</strong>. <strong>Advies:</strong> schaaf een boiler van minimaal <strong>${adviesVolume}L</strong> aan.`
+        });
+      } else {
+        // Optimale boiler suggestie (gebaseerd op standaard verbruik)
+        const optimalVolume = aantalPersonen <= 2 ? 80 : (aantalPersonen <= 3 ? 120 : 150);
+        if (boilerVolume !== optimalVolume) {
+          suggestions.push({
+            type: 'info',
+            text: `Voor <strong>${aantalPersonen} personen</strong> is een <strong>${optimalVolume}L</strong> boiler optimaal. U heeft nu ${boilerVolume}L geselecteerd.`
+          });
+        }
+      }
+
+      let nerdStats = { maxVermogenW: 0, urenOpSetpoint: 0, tapEvents: 0, tapEnergyTotalKwh: 0 };
+      let isDrempelActief = false;
+      let legionellaCyclusDag = 0;
+      
+      for (let maand = 0; maand < 12; maand++) {
+        // Seizoensvariatie koudwater temperatuur en ΔT (april-sept = zomer)
+        const isSummer = maand >= 3 && maand <= 8;
+        const koudWaterTemp = isSummer ? KOUDWATER_TEMP_ZOMER_C : KOUDWATER_TEMP_WINTER_C;
+        const deltaT = isSummer ? 45 : 50;  // Temperatuurverschil: 45°C zomer, 50°C winter (MDPI)
+        
+        for (let dag = 0; dag < dagenPerMaand[maand]; dag++) {
+          legionellaCyclusDag++;
+          
+          // Legionella preventie: elke 7 dagen naar 60°C
+          if (legionellaCyclusDag % LEGIONELLA_INTERVAL_DAYS === 0 && boilerTemp < LEGIONELLA_TEMP_C) {
+            const energieVoorLegionella = (LEGIONELLA_TEMP_C - boilerTemp) * boilerVolume * SPECIFIEKE_WARMTE_KWH_L_C;
+            if (modus !== 'stand-alone') {
+              totaalBespaardeGasKwh += energieVoorLegionella;
+            } else {
+              totaalNetstroomVerbruikKwh += energieVoorLegionella;
+            }
+            boilerTemp = LEGIONELLA_TEMP_C;
+          }
+          let standaardDagTapEnergyKwh = 0;
+          if (!tapProfielPerUur && standaardLiters40C > 0 && boilerTemp > DOELTEMP_C) {
+            // Bereken hoeveel liter boilerwater (bij boilerTemp) nodig is voor standaardLiters40C bij 40°C
+            const warmWaterLiters = Math.min(boilerVolume, (standaardLiters40C * (DOELTEMP_C - koudWaterTemp)) / Math.max(boilerTemp - koudWaterTemp, 0.1));
+            // Energie uit de boiler: alleen het warme water dat uit de boiler komt
+            standaardDagTapEnergyKwh = warmWaterLiters * (boilerTemp - koudWaterTemp) * SPECIFIEKE_WARMTE_KWH_L_C;
+            totaalDoucheEnergieKwh += standaardDagTapEnergyKwh;
+            if (modus !== 'stand-alone') {
+              totaalBespaardeGasKwh += standaardDagTapEnergyKwh;
+            }
+            boilerTemp = ((boilerVolume - warmWaterLiters) * boilerTemp + warmWaterLiters * koudWaterTemp) / boilerVolume;
+          }
+
+          const stilstandsVerliesTempDrop = (((stilstandverliesW[boilerVolume]||50) / 1000) * 24) / (boilerVolume * SPECIFIEKE_WARMTE_KWH_L_C);
+          boilerTemp = Math.max(koudWaterTemp, boilerTemp - stilstandsVerliesTempDrop);
+
+          if (modus === 'stand-alone' && boilerTemp < STANDALONE_BASTEMP_C) {
+            const energieNodigVoorBasis = (STANDALONE_BASTEMP_C - boilerTemp) * boilerVolume * SPECIFIEKE_WARMTE_KWH_L_C;
+            totaalNetstroomVerbruikKwh += energieNodigVoorBasis;
+            boilerTemp = STANDALONE_BASTEMP_C;
+          }
+
+          const dagelijkseZonKwh = jaarlijkseOpbrengstKWh * (maandelijkseZonVerdeling[maand] / 100) / dagenPerMaand[maand];
+
+          for (let uur = 0; uur < 24; uur++) {
+            const tempVoorUur = boilerTemp;
+            const uurlijkseZonVermogenW = (dagelijkseZonKwh * solarHourProfile[uur]) * 1000,
+                  basisVerbruikUur = BASISVERBRUIK_PROFIEL_W[uur],
+                  overschotW = Math.max(0, uurlijkseZonVermogenW - basisVerbruikUur);
+
+            if (overschotW > 0) maandData[maand].zonOverschot += overschotW / 1000;
+
+            let doucheEnergieKwh = 0;
+            if (tapProfielPerUur) {
+              const liters40C = tapProfielPerUur[uur] || 0;
+              if (liters40C > 0 && boilerTemp > DOELTEMP_C) {
+                // Bereken hoeveel liter boilerwater nodig is
+                const warmWaterLiters = Math.min(boilerVolume, (liters40C * (DOELTEMP_C - koudWaterTemp)) / Math.max(boilerTemp - koudWaterTemp, 0.1));
+                // Energie uit de boiler: alleen het warme water dat uit de boiler komt  
+                doucheEnergieKwh = warmWaterLiters * (boilerTemp - koudWaterTemp) * SPECIFIEKE_WARMTE_KWH_L_C;
+                totaalDoucheEnergieKwh += doucheEnergieKwh;
+                if (modus !== 'stand-alone') {
+                  totaalBespaardeGasKwh += doucheEnergieKwh;
+                }
+                boilerTemp = ((boilerVolume - warmWaterLiters) * boilerTemp + warmWaterLiters * koudWaterTemp) / boilerVolume;
+              }
+            } else if (uur === 0 && standaardDagTapEnergyKwh > 0) {
+              doucheEnergieKwh = standaardDagTapEnergyKwh;
+            }
+
+            const tempNaTap = boilerTemp;
+
+            const dwtwHerwinningKwh = (modus !== 'stand-alone' && dwtwActief) ? (doucheEnergieKwh * DWTW_RENDEMENT) : 0;
+
+            let vermogenNaarBoilerW = 0;
+            const ruimteVoorWarmte = boilerTemp < BOILER_DOELTEMP_C - 0.1;
+            if (modus === 'nymo-dimmer') {
+              if (overschotW >= NYMO_MIN_POWER_W && ruimteVoorWarmte) {
+                vermogenNaarBoilerW = Math.min(overschotW, boilerMaxPowerW);
+              }
+            } else {
+              if (!isDrempelActief && overschotW >= pvStart) isDrempelActief = true;
+              else if (isDrempelActief && overschotW < pvStop) isDrempelActief = false;
+              if (isDrempelActief && ruimteVoorWarmte) vermogenNaarBoilerW = boilerMaxPowerW;
+            }
+
+            let energieNaarBoilerKwh = 0;
+            if (vermogenNaarBoilerW > 0 && boilerTemp < BOILER_DOELTEMP_C) {
+              const benodigdeEnergieKwh = (BOILER_DOELTEMP_C - boilerTemp) * boilerVolume * SPECIFIEKE_WARMTE_KWH_L_C;
+              energieNaarBoilerKwh = Math.min(vermogenNaarBoilerW / 1000, benodigdeEnergieKwh);
+              boilerTemp += energieNaarBoilerKwh / (boilerVolume * SPECIFIEKE_WARMTE_KWH_L_C);
+              maandData[maand].naarBoiler += energieNaarBoilerKwh;
+            } else if (vermogenNaarBoilerW > 0) {
+              vermogenNaarBoilerW = 0;
+            }
+
+            nerdStats.maxVermogenW = Math.max(nerdStats.maxVermogenW, vermogenNaarBoilerW);
+            if (Math.abs(boilerTemp - BOILER_DOELTEMP_C) < 0.5) nerdStats.urenOpSetpoint++;
+            if (tapProfielPerUur && doucheEnergieKwh > 0) {
+              nerdStats.tapEvents++;
+              nerdStats.tapEnergyTotalKwh += doucheEnergieKwh;
+            }
+
+            berekeningMomenten[maand][dag][uur] = {
+              zonneVermogenW: uurlijkseZonVermogenW,
+              basisVerbruikW: basisVerbruikUur,
+              overschotW,
+              vermogenNaarBoilerW,
+              energieNaarBoilerKwh,
+              boilerTempVoorC: tempVoorUur,
+              boilerTempNaTapC: tempNaTap,
+              boilerTempNaC: boilerTemp,
+              doucheEnergieKwh,
+              dwtwHerwinningKwh
+            };
+
+            totalTempSum += boilerTemp;
+          }
+        }
+      }
+
+      updateNerdMetrics(nerdStats);
+
+      const totaalGeleverdeKwhNaarBoiler = maandData.reduce((sum, d) => sum + d.naarBoiler, 0);
+      const totaalZonOverschot = maandData.reduce((sum, d) => sum + d.zonOverschot, 0);
+      const zelfconsumptiePercentage = totaalZonOverschot > 0 ? (totaalGeleverdeKwhNaarBoiler / totaalZonOverschot) * 100 : 0;
+      const avgTemp = totalTempSum / HOURS_IN_YEAR;
+      
+      // 1 boom absorbeert ~25 kg CO2 per jaar
+      const CO2_PER_BOOM = 25;
+
+      let nettoFinancieleWinst = 0, co2Besparing = 0, aantalBomen = 0, breakdownHTML = '';
+      const extraGasBesparingKwh = (modus !== 'stand-alone' && dwtwActief) ? totaalDoucheEnergieKwh * DWTW_RENDEMENT : 0;
+
+      document.getElementById('gas-besparing-box').classList.toggle('hidden', modus === 'stand-alone');
+      document.getElementById('stroomkosten-box').classList.toggle('hidden', modus !== 'stand-alone');
+      document.getElementById('jaarverbruik-box').classList.toggle('hidden', modus !== 'stand-alone');
+
+      if (modus === 'stand-alone') {
+        const waardeBespaardeNetstroom = totaalGeleverdeKwhNaarBoiler * stroomprijs;
+        const gederfdeStroominkomsten = totaalGeleverdeKwhNaarBoiler * teruglevertarief;
+        const gederfdeLabel = teruglevertarief >= 0
+          ? `<div><span>Gederfde teruglevering:</span> <span class="loss">- €${gederfdeStroominkomsten.toFixed(2).replace('.',',')}</span></div>`
+          : `<div><span>Gederfde teruglevering:</span> <span class="gain">+ €${Math.abs(gederfdeStroominkomsten).toFixed(2).replace('.',',')}</span></div>`;
+        nettoFinancieleWinst = waardeBespaardeNetstroom - gederfdeStroominkomsten;
+        const jaarlijkseStroomkosten = totaalNetstroomVerbruikKwh * stroomprijs;
+        const totaalJaarverbruik = totaalNetstroomVerbruikKwh + totaalGeleverdeKwhNaarBoiler;
+        co2Besparing = totaalGeleverdeKwhNaarBoiler * CO2_PER_KWH_STROOM;
+        aantalBomen = co2Besparing / CO2_PER_BOOM;
+
+        setAnimatedValue('stroomkosten-jaar', jaarlijkseStroomkosten, formatters.euro);
+        setAnimatedValue('jaarverbruik-boiler', totaalJaarverbruik, formatters.kwh);
+
+        breakdownHTML = `<h3>Financiële Analyse (Stand-alone)</h3>
+        <div class="financial-breakdown">
+          <div><span>Bespaarde stroomkosten (door zon):</span> <span class="gain">+ €${waardeBespaardeNetstroom.toFixed(2).replace('.',',')}</span></div>
+          ${gederfdeLabel}
+          <div><span>Netto Winst per Jaar:</span> <span>€${nettoFinancieleWinst.toFixed(2).replace('.',',')}</span></div>
+          <hr>
+          <div><span>Jaarlijkse basiskosten (netstroom):</span> <span>€${jaarlijkseStroomkosten.toFixed(2).replace('.',',')}</span></div>
+        </div>`;
+      } else {
+        const bespaardGasM3ZonderDWTW = (totaalBespaardeGasKwh / RENDEMENT_CV_KETEL) / ENERGIE_PER_M3_GAS_KWH;
+        const extraGasM3DWTW = (extraGasBesparingKwh / RENDEMENT_CV_KETEL) / ENERGIE_PER_M3_GAS_KWH;
+        const bespaardGasM3 = bespaardGasM3ZonderDWTW + extraGasM3DWTW;
+        const waardePVGas = bespaardGasM3ZonderDWTW * gasprijsPerM3;
+        const waardeDWTWGas = extraGasM3DWTW * gasprijsPerM3;
+        const waardeBespaardGas = waardePVGas + waardeDWTWGas;
+        const gederfdeStroominkomsten = totaalGeleverdeKwhNaarBoiler * teruglevertarief;
+        const gederfdeLabel = teruglevertarief >= 0
+          ? `<div><span>Gederfde teruglevering:</span> <span class="loss">- €${gederfdeStroominkomsten.toFixed(2).replace('.',',')}</span></div>`
+          : `<div><span>Gederfde teruglevering:</span> <span class="gain">+ €${Math.abs(gederfdeStroominkomsten).toFixed(2).replace('.',',')}</span></div>`;
+
+        nettoFinancieleWinst = waardeBespaardGas - gederfdeStroominkomsten;
+        co2Besparing = bespaardGasM3 * CO2_PER_M3_GAS;
+        aantalBomen = co2Besparing / CO2_PER_BOOM;
+
+        setAnimatedValue('gas-besparing', bespaardGasM3, formatters.m3);
+        const dwtwRegel = (dwtwActief && extraGasM3DWTW > 0)
+          ? `<div><span>Extra gasbesparing DWTW (52%):</span> <span class="gain">+ €${waardeDWTWGas.toFixed(2).replace('.',',')}</span></div>`
+          : '';
+
+        breakdownHTML = `<h3>Financiële Analyse (Nymo Dimmer)</h3>
+        <div class="financial-breakdown">
+          <div><span>Waarde bespaard gas (PV):</span> <span class="gain">+ €${waardePVGas.toFixed(2).replace('.',',')}</span></div>
+          ${dwtwRegel}
+          ${gederfdeLabel}
+          <div><span>Netto Winst per Jaar:</span> <span>€${nettoFinancieleWinst.toFixed(2).replace('.',',')}</span></div>
+        </div>`;
+      }
+
+      // Bereken bandbreedte: conservatief/gemiddeld/optimistisch scenario
+      // Conservatief: korter douchen, lagere temp, minder warmwater (70%)
+      // Optimistisch: langer douchen, hogere temp, meer warmwater (130%)
+      const efficiencyFactorConservatief = 0.70;  // Zuinig douchgedrag
+      const efficiencyFactorOptimistisch = 1.30;   // Comfortabel douchgedrag
+      
+      const nettoWinstConservatief = nettoFinancieleWinst * efficiencyFactorConservatief;
+      const nettoWinstOptimistisch = nettoFinancieleWinst * efficiencyFactorOptimistisch;
+      
+      setAnimatedValue('euro-besparing', nettoFinancieleWinst, formatters.euro);
+      
+      // Toon bandbreedte als visuele balk
+      const rangeElement = document.getElementById('euro-besparing-range');
+      if (rangeElement) {
+        const range = nettoWinstOptimistisch - nettoWinstConservatief;
+        const conservatiefPct = 0;
+        const gemiddeldPct = ((nettoFinancieleWinst - nettoWinstConservatief) / range) * 100;
+        const optimistischPct = 100;
+        
+        rangeElement.innerHTML = `
+          <div style="margin-top: 16px;">
+            <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 32px;">Bandbreedte op basis van douchgedrag</div>
+            
+            <!-- Visuele balk -->
+            <div style="position: relative; height: 40px; background: linear-gradient(to right, #ff9800 0%, #2196f3 50%, #4caf50 100%); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <!-- Conservatief marker -->
+              <div style="position: absolute; left: ${conservatiefPct}%; top: -8px; transform: translateX(-50%);">
+                <div style="width: 2px; height: 56px; background: #e65100;"></div>
+                <div style="position: absolute; top: -22px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 0.7rem; color: #e65100; font-weight: 700;">€${nettoWinstConservatief.toFixed(0)}</div>
+              </div>
+              
+              <!-- Gemiddeld marker -->
+              <div style="position: absolute; left: ${gemiddeldPct}%; top: -8px; transform: translateX(-50%);">
+                <div style="width: 3px; height: 56px; background: #0d47a1;"></div>
+                <div style="position: absolute; top: -22px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 0.8rem; color: #0d47a1; font-weight: 700;">€${nettoFinancieleWinst.toFixed(0)}</div>
+              </div>
+              
+              <!-- Optimistisch marker -->
+              <div style="position: absolute; left: ${optimistischPct}%; top: -8px; transform: translateX(-50%);">
+                <div style="width: 2px; height: 56px; background: #1b5e20;"></div>
+                <div style="position: absolute; top: -22px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 0.7rem; color: #1b5e20; font-weight: 700;">€${nettoWinstOptimistisch.toFixed(0)}</div>
+              </div>
+            </div>
+            
+            <!-- Labels onder de balk -->
+            <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 0.7rem;">
+              <span style="color: #e65100; font-weight: 600;">Zuinig douchen</span>
+              <span style="color: #0d47a1; font-weight: 600;">Gemiddeld</span>
+              <span style="color: #1b5e20; font-weight: 600;">Comfortabel</span>
+            </div>
+          </div>
+        `;
+      }
+      
+      setAnimatedValue('co2-besparing', co2Besparing, formatters.kg);
+      setAnimatedValue('co2-bomen', aantalBomen, formatters.bomen);
+      setAnimatedValue('kwh-opbrengst', totaalGeleverdeKwhNaarBoiler, formatters.kwh);
+      setAnimatedValue('avg-temp-value', avgTemp, formatters.temp);
+      setAnimatedValue('zelfconsumptie', zelfconsumptiePercentage, formatters.percentage);
+
+      const tabelBody = document.querySelector("#opbrengst-tabel"),
+            chart = document.getElementById('chart');
+
+      tabelBody.innerHTML = `<thead><tr><th>Maand</th><th>Zon-overschot (kWh)</th><th>Energie naar Boiler (kWh)</th></tr></thead><tbody></tbody>`;
+      chart.innerHTML = "";
+
+      let maxMaandEnergie = Math.max(...maandData.map(d => d.naarBoiler), 1),
+          tabelBodyInner = tabelBody.querySelector('tbody');
+
+      maandData.forEach((data, i) => {
+        tabelBodyInner.innerHTML += `<tr><td>${maandenNamen[i]}</td><td>${data.zonOverschot.toFixed(0)} kWh</td><td><b>${data.naarBoiler.toFixed(0)} kWh</b></td></tr>`;
+        chart.innerHTML += `<div class="bar-column" style="left: ${i * (100 / 12)}%">
+          <div class="bar" style="height: ${(data.naarBoiler / maxMaandEnergie) * 80}%">
+            <div class="bar-value">${data.naarBoiler.toFixed(0)}</div>
+          </div>
+          <div class="month-label">${maandenNamen[i].substring(0,3)}</div>
+        </div>`;
+      });
+
+      const suggestionContainer = document.getElementById('suggestion-container');
+      suggestionContainer.innerHTML = breakdownHTML;
+
+      if (suggestions.length > 0) {
+        suggestionContainer.innerHTML += '<h3>Persoonlijke Suggesties</h3>' +
+          suggestions.map(s => `
+            <div class="suggestion ${s.type}">
+              ${s.type === 'warning'
+                ? '<svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF9500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+                : (s.type === 'info'
+                  ? '<svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4A90E2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>'
+                  : '<svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>')}
+              <div><p>${s.text}</p></div>
+            </div>
+          `).join('');
+      }
+
+      suggestionContainer.classList.remove('hidden');
+      updateBerekeningMoment();
+    }, 250);
+
+    window.onload = () => {
+      initDisclaimer();
+      initBerekeningSelectors();
+      initTapRows();
+      initGasprijsUnitControls();
+      toggleAdvancedPanel(true);
+      simuleer();
+    };
+  </script>
+</body>
+</html>
