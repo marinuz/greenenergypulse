@@ -403,7 +403,7 @@
           </label>
         </div>
         <!-- Drempels blijven bestaan in code, maar zijn altijd verborgen in NYMO-modus -->
-        <div id="drempel-group">
+        <div id="drempel-group" class="collapsed" style="display: none;">
           <h3>Boiler Aan/Uit Drempels</h3>
           <div class="input-group">
             <label for="pv-start">PV start drempel (Watt)</label>
@@ -630,6 +630,56 @@
         <p>Hulp bij de keuze van uw elektrische boiler: <a href="https://www.ithodaalderop.nl/nl-nl/professional/adviestool-warmtapwatertoestellen" target="_blank" style="color: var(--secondary-color); text-decoration: underline;">Online link invoegen</a></p>
       </div>
     </details>
+
+    <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
+      <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-weight: 600; color: var(--primary-color);">Hoe wordt de opbrengst van de zonnepanelen berekend?</span>
+        <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
+        <p>De tool maakt gebruik van de gemiddelde opbrengst van zonnepanelen in Nederland. De tool houd ook rekening met de gemiddelde dakoriëntatie en Hellingshoek en de aantal zonuren in Nederland.</p>
+      </div>
+    </details>
+
+    <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
+      <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-weight: 600; color: var(--primary-color);">Ik beschik niet over een douche wtw is de Green Energy Pulse wel geschikt voor mijn situatie?</span>
+        <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
+        <p>Met de tool kunt u een indicatieve berekening maken wat het extra opbrengst is met een douche wtw. Het is uiteraard niet noodzakelijk dat u over een douche wtw beschikt.</p>
+      </div>
+    </details>
+
+    <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
+      <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-weight: 600; color: var(--primary-color);">Welk gas tarief kan ik het beste invullen in de berekeningstool?</span>
+        <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
+        <p>Het jaarlijkse tarief voor gas in Nederland is sterk, maar verwacht in januari 2026 een gemiddelde prijs van rond de €1,18 tot €1,33 per m³, exclusief vaste kosten, met variaties afhankelijk van je leverancier en contract (vast/variabel). Voor het juiste tarief verwijzen wij u naar uw huidige contract met uw energie leverancier.</p>
+      </div>
+    </details>
+
+    <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
+      <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-weight: 600; color: var(--primary-color);">Wij overwegen om zonnepanelen bij te laten plaatsen voor meer rendabiliteit met de Green Energy Pulse is dit een goede investering?</span>
+        <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
+        <p>Zonnepanelen bij laten plaatsen is een goede investering voor lagere energiekosten, maar de rendabiliteit hangt af van je huidige installatie, dakruimte en energiebehoefte; schakel een vakkundige installateur in voor een analyse en offerte. U kunt onze tool gebruiken voor een indicatieve berekening.</p>
+      </div>
+    </details>
+
+    <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
+      <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-weight: 600; color: var(--primary-color);">Met welke douchetijd houdt de tool rekening?</span>
+        <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
+        <p>De tool houdt rekening met een gemiddelde doucheduur van 8 minuten en het gemiddelde aantal liter water per persoon per dag voor het douchen dit komt uit op 45.</p>
+      </div>
+    </details>
   </div>
 
   <div class="panel full-width disclaimer-panel" aria-live="polite" style="margin-top: 40px;">
@@ -829,6 +879,9 @@
         convertedValue = currentValue * ENERGIE_PER_M3_GAS_KWH;
       }
 
+      // Blur het input veld eerst om focus te voorkomen
+      valueInput.blur();
+      
       hiddenInput.value = unit;
       valueInput.step = unit === 'per-kwh' ? '0.001' : '0.01';
       valueInput.value = Number.isFinite(convertedValue)
@@ -836,6 +889,12 @@
         : '';
       if (unitLabel) unitLabel.textContent = `(${GAS_UNIT_LABELS[unit]})`;
       updateGasprijsToggleButtons(unit);
+      
+      // Zorg dat het input veld geen focus krijgt na value update
+      if (document.activeElement === valueInput) {
+        valueInput.blur();
+      }
+      
       simuleer();
     }
 
