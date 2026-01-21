@@ -111,6 +111,7 @@
       transition: all 0.3s ease-in-out;
       display: flex; flex-direction: column; justify-content: flex-start;
       min-height: 160px;
+      position: relative;
     }
     .summary-box:hover { transform: translateY(-4px); box-shadow: var(--shadow-soft); }
     .summary-box .label {
@@ -118,6 +119,12 @@
       gap: 8px; color: var(--primary-color); font-weight: 600;
       text-align: center; height: 50px; margin-bottom: auto;
       line-height: 1.3; flex-wrap: wrap;
+      position: relative;
+    }
+    .summary-box .info-icon {
+      position: absolute;
+      top: 0;
+      right: 0;
     }
     .summary-box .value {
       font-size: 2.2rem;
@@ -243,15 +250,15 @@
       visibility: hidden;
       opacity: 0;
       position: fixed;
-      z-index: 99999;
+      z-index: 999999;
       background-color: white;
       border: 2px solid var(--secondary-color);
       border-radius: 12px;
       padding: 20px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-      width: 320px;
+      width: 300px;
       max-width: calc(100vw - 40px);
-      transition: opacity 0.3s ease, visibility 0.3s ease;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
       pointer-events: none;
     }
     .info-icon:hover .info-tooltip {
@@ -261,6 +268,12 @@
     .info-tooltip.active {
       visibility: visible;
       opacity: 1;
+      pointer-events: auto;
+    }
+    .info-tooltip p {
+      margin: 0;
+      line-height: 1.6;
+      color: var(--text-dark);
     }
     @media (max-width: 768px) {
       .info-tooltip {
@@ -698,6 +711,13 @@
                 <path d="M2 9.5A2.5 2.5 0 0 1 4.5 7H8V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2h3.5A2.5 2.5 0 0 1 22 9.5V15a2 2 0 0 1-2 2H3a1 1 0 0 0-1 1z"></path>
               </svg>
               CO&#8322; Besparing
+              <span class="info-icon">
+                i
+                <div class="info-tooltip">
+                  <h4>CO₂ Besparing</h4>
+                  <p style="margin: 0; line-height: 1.6;">Berekend op basis van het bespaard gas. Per m³ gas wordt 1,884 kg CO₂ uitgestoten. Door uw boiler met zonne-energie te verwarmen in plaats van gas, bespaart u deze CO₂-uitstoot.</p>
+                </div>
+              </span>
             </div>
             <div id="co2-besparing" class="value" style="color: #6e6e73;">0 kg</div>
           </div>
@@ -706,6 +726,13 @@
             <div class="label">
               <span style="font-size: 24px; line-height: 1;">🌳</span>
               Gelijk aan aantal bomen
+              <span class="info-icon">
+                i
+                <div class="info-tooltip">
+                  <h4>Bomen equivalent</h4>
+                  <p style="margin: 0; line-height: 1.6;">Een boom neemt gemiddeld 25 kg CO₂ per jaar op. Dit getal toont hoeveel bomen nodig zijn om dezelfde hoeveelheid CO₂ op te nemen als u bespaart met de Green Energy Pulse.</p>
+                </div>
+              </span>
             </div>
             <div id="co2-bomen" class="value" style="color: #34C759;">0 🌱</div>
           </div>
@@ -717,6 +744,13 @@
                 <path d="M12 6v6l4 2"></path>
               </svg>
               Zelfconsumptie percentage
+              <span class="info-icon">
+                i
+                <div class="info-tooltip">
+                  <h4>Zelfconsumptie</h4>
+                  <p style="margin: 0; line-height: 1.6;">Het percentage van uw zonne-energie dat u zelf verbruikt in plaats van teruglevering aan het net. Dit omvat basisverbruik en energie naar de boiler. Hoe hoger dit percentage, hoe beter u uw zonnepanelen benut.</p>
+                </div>
+              </span>
             </div>
             <div id="zelfconsumptie" class="value" style="color: var(--accent-color-green);">0%</div>
           </div>
@@ -729,18 +763,15 @@
                 <path d="M12 12v.01"></path>
               </svg>
               Benutte Zonne-energie
+              <span class="info-icon">
+                i
+                <div class="info-tooltip">
+                  <h4>Benutte Zonne-energie</h4>
+                  <p style="margin: 0; line-height: 1.6;">De totale hoeveelheid zonne-energie die in de boiler is gestopt. De Green Energy Pulse gebruikt automatisch het zonne-overschot om water op te warmen, vanaf 100W overschot.</p>
+                </div>
+              </span>
             </div>
             <div id="kwh-opbrengst" class="value kwh">0 kWh</div>
-          </div>
-
-          <div class="summary-box" id="avg-temp-box">
-            <div class="label">
-              <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"></path>
-              </svg>
-              Gem. Boilertemperatuur
-            </div>
-            <div id="avg-temp-value" class="value" style="color: var(--primary-color);">0,0 &deg;C</div>
           </div>
 
           <div class="summary-box hidden" id="gas-besparing-box">
@@ -750,6 +781,13 @@
                 <path d="M12.2,4.6l.6-1a1,1,0,0,0-1.6-.9l-2.4,4.2c-.8,1.3-1,2.5-1,3.2a6,6,0,0,0,12,0c0-.7-.3-1.9-1-3.2L12.2,4.6Z"></path>
               </svg>
               Bespaard Gas
+              <span class="info-icon">
+                i
+                <div class="info-tooltip">
+                  <h4>Bespaard Gas</h4>
+                  <p style="margin: 0; line-height: 1.6;">De hoeveelheid gas die u bespaart door warm water uit de boiler te gebruiken in plaats van gasgestookte verwarming. Berekend op basis van de energie die uit de boiler komt bij tapmoment(en), met 1 m³ gas = 9,77 kWh.</p>
+                </div>
+              </span>
             </div>
             <div id="gas-besparing" class="value gas">0 m&sup3;</div>
           </div>
@@ -937,7 +975,7 @@
   </div>
 
   <script>
-    // Info tooltip positionering en mobiele support
+    // Info tooltip positionering en gedrag
     document.addEventListener('DOMContentLoaded', function() {
       const infoIcons = document.querySelectorAll('.info-icon');
       let activeTooltip = null;
@@ -946,81 +984,146 @@
         const tooltip = icon.querySelector('.info-tooltip');
         if (!tooltip) return;
         
-        // Positionering functie
+        // Verplaats tooltip naar body voor betere positionering
+        document.body.appendChild(tooltip);
+        
+        // Sla referentie op tussen icon en tooltip
+        icon.tooltipElement = tooltip;
+        tooltip.iconElement = icon;
+        
+        // Functie om tooltip te positioneren
         function positionTooltip() {
-          const rect = icon.getBoundingClientRect();
-          const tooltipWidth = tooltip.offsetWidth || 320;
-          const viewportWidth = window.innerWidth;
+          const iconRect = icon.getBoundingClientRect();
+          const scrollY = window.scrollY || window.pageYOffset;
+          const scrollX = window.scrollX || window.pageXOffset;
           
-          // Bereken positie (rechts van het icoon, of links als er geen ruimte is)
-          let left = rect.right + 10;
-          if (left + tooltipWidth > viewportWidth - 20) {
-            left = rect.left - tooltipWidth - 10;
-            if (left < 20) {
-              left = 20;
-            }
+          const padding = 10;
+          const tooltipWidth = 300;
+          
+          // Bereken positie: standaard links van het icoon
+          let left = iconRect.left + scrollX - tooltipWidth - padding;
+          let top = iconRect.top + scrollY;
+          
+          // Als het niet links past, rechts
+          if (left < scrollX + padding) {
+            left = iconRect.right + scrollX + padding;
           }
           
-          tooltip.style.left = left + 'px';
-          tooltip.style.top = Math.max(20, rect.top - 10) + 'px';
+          // Als het ook rechts niet past, boven/onder icoon
+          if (left + tooltipWidth > scrollX + window.innerWidth - padding) {
+            left = iconRect.left + scrollX;
+            top = iconRect.bottom + scrollY + padding;
+          }
+          
+          // Zorg dat het horizontaal binnen viewport blijft
+          if (left < scrollX + padding) {
+            left = scrollX + padding;
+          }
+          if (left + tooltipWidth > scrollX + window.innerWidth - padding) {
+            left = scrollX + window.innerWidth - tooltipWidth - padding;
+          }
+          
+          // Zorg dat het verticaal binnen viewport blijft
+          if (top < scrollY + padding) {
+            top = scrollY + padding;
+          }
+          
+          tooltip.style.left = Math.round(left) + 'px';
+          tooltip.style.top = Math.round(top) + 'px';
+          tooltip.style.position = 'absolute';
         }
         
-        // Hover voor desktop
+        // Mouse enter - toon tooltip
         icon.addEventListener('mouseenter', function(e) {
           positionTooltip();
         });
         
-        // Click/tap voor mobiel en desktop
+        // Mouse leave - verberg tooltip als niet actief
+        icon.addEventListener('mouseleave', function(e) {
+          if (!tooltip.classList.contains('active')) {
+            tooltip.style.visibility = 'hidden';
+            tooltip.style.opacity = '0';
+          }
+        });
+        
+        // Herstel hover gedrag via JavaScript
+        icon.addEventListener('mouseenter', function() {
+          if (!tooltip.classList.contains('active')) {
+            positionTooltip();
+            tooltip.style.visibility = 'visible';
+            tooltip.style.opacity = '1';
+          }
+        });
+        
+        // Click - toggle tooltip (voor mobiel)
         icon.addEventListener('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
           
-          // Sluit andere open tooltips
-          if (activeTooltip && activeTooltip !== tooltip) {
-            activeTooltip.classList.remove('active');
-          }
+          // Sluit andere tooltips
+          document.querySelectorAll('.info-tooltip.active').forEach(t => {
+            if (t !== tooltip) {
+              t.classList.remove('active');
+              t.style.visibility = 'hidden';
+              t.style.opacity = '0';
+            }
+          });
           
           // Toggle deze tooltip
-          const isActive = tooltip.classList.contains('active');
-          tooltip.classList.toggle('active');
-          activeTooltip = isActive ? null : tooltip;
+          const wasActive = tooltip.classList.contains('active');
           
-          if (!isActive) {
+          if (!wasActive) {
             positionTooltip();
+            tooltip.classList.add('active');
+            tooltip.style.visibility = 'visible';
+            tooltip.style.opacity = '1';
+            activeTooltip = tooltip;
+          } else {
+            tooltip.classList.remove('active');
+            tooltip.style.visibility = 'hidden';
+            tooltip.style.opacity = '0';
+            activeTooltip = null;
           }
         });
       });
       
-      // Sluit tooltip bij klikken buiten de info icon
+      // Click buiten tooltip - sluit alle actieve tooltips
       document.addEventListener('click', function(e) {
-        if (!e.target.closest('.info-icon') && activeTooltip) {
-          activeTooltip.classList.remove('active');
+        if (!e.target.closest('.info-icon')) {
+          document.querySelectorAll('.info-tooltip.active').forEach(tooltip => {
+            tooltip.classList.remove('active');
+            tooltip.style.visibility = 'hidden';
+            tooltip.style.opacity = '0';
+          });
           activeTooltip = null;
         }
       });
       
-      // Herpositioneer bij scrollen of resize
-      let resizeTimeout;
-      window.addEventListener('resize', function() {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(function() {
-          if (activeTooltip) {
-            const icon = activeTooltip.closest('.info-icon');
-            if (icon) {
-              const rect = icon.getBoundingClientRect();
-              const tooltipWidth = activeTooltip.offsetWidth || 320;
-              const viewportWidth = window.innerWidth;
-              let left = rect.right + 10;
-              if (left + tooltipWidth > viewportWidth - 20) {
-                left = rect.left - tooltipWidth - 10;
-                if (left < 20) left = 20;
-              }
-              activeTooltip.style.left = left + 'px';
-              activeTooltip.style.top = Math.max(20, rect.top - 10) + 'px';
-            }
-          }
-        }, 100);
+      // ESC toets - sluit tooltips
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          document.querySelectorAll('.info-tooltip.active').forEach(tooltip => {
+            tooltip.classList.remove('active');
+            tooltip.style.visibility = 'hidden';
+            tooltip.style.opacity = '0';
+          });
+          activeTooltip = null;
+        }
       });
+      
+      // Bij scrollen - sluit tooltips
+      let scrollTimeout;
+      window.addEventListener('scroll', function() {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(function() {
+          document.querySelectorAll('.info-tooltip.active').forEach(tooltip => {
+            tooltip.classList.remove('active');
+            tooltip.style.visibility = 'hidden';
+            tooltip.style.opacity = '0';
+          });
+          activeTooltip = null;
+        }, 100);
+      }, true);
     });
 
     function openDisclaimer() {
