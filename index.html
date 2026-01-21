@@ -226,11 +226,14 @@
       color: var(--secondary-color);
       font-size: 11px;
       font-weight: 700;
-      cursor: help;
+      cursor: pointer;
       position: relative;
       flex-shrink: 0;
       border: 1px solid var(--secondary-color);
       transition: all 0.2s ease;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
     .info-icon:hover {
       background-color: var(--secondary-color);
@@ -247,12 +250,23 @@
       padding: 20px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.15);
       width: 320px;
+      max-width: calc(100vw - 40px);
       transition: opacity 0.3s ease, visibility 0.3s ease;
       pointer-events: none;
     }
     .info-icon:hover .info-tooltip {
       visibility: visible;
       opacity: 1;
+    }
+    .info-tooltip.active {
+      visibility: visible;
+      opacity: 1;
+    }
+    @media (max-width: 768px) {
+      .info-tooltip {
+        width: calc(100vw - 40px);
+        max-width: 320px;
+      }
     }
     .info-tooltip h4 {
       margin: 0 0 15px 0;
@@ -918,18 +932,89 @@
   </div>
 
   <script>
-    // Info tooltip positionering
+    // Info tooltip positionering en mobiele support
     document.addEventListener('DOMContentLoaded', function() {
       const infoIcons = document.querySelectorAll('.info-icon');
+      let activeTooltip = null;
+      
       infoIcons.forEach(icon => {
+        const tooltip = icon.querySelector('.info-tooltip');
+        if (!tooltip) return;
+        
+        // Positionering functie
+        function positionTooltip() {
+          const rect = icon.getBoundingClientRect();
+          const tooltipWidth = tooltip.offsetWidth || 320;
+          const viewportWidth = window.innerWidth;
+          
+          // Bereken positie (rechts van het icoon, of links als er geen ruimte is)
+          let left = rect.right + 10;
+          if (left + tooltipWidth > viewportWidth - 20) {
+            left = rect.left - tooltipWidth - 10;
+            if (left < 20) {
+              left = 20;
+            }
+          }
+          
+          tooltip.style.left = left + 'px';
+          tooltip.style.top = Math.max(20, rect.top - 10) + 'px';
+        }
+        
+        // Hover voor desktop
         icon.addEventListener('mouseenter', function(e) {
-          const tooltip = this.querySelector('.info-tooltip');
-          if (tooltip) {
-            const rect = this.getBoundingClientRect();
-            tooltip.style.left = (rect.right + 10) + 'px';
-            tooltip.style.top = (rect.top - 10) + 'px';
+          positionTooltip();
+        });
+        
+        // Click/tap voor mobiel en desktop
+        icon.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          // Sluit andere open tooltips
+          if (activeTooltip && activeTooltip !== tooltip) {
+            activeTooltip.classList.remove('active');
+          }
+          
+          // Toggle deze tooltip
+          const isActive = tooltip.classList.contains('active');
+          tooltip.classList.toggle('active');
+          activeTooltip = isActive ? null : tooltip;
+          
+          if (!isActive) {
+            positionTooltip();
           }
         });
+      });
+      
+      // Sluit tooltip bij klikken buiten de info icon
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.info-icon') && activeTooltip) {
+          activeTooltip.classList.remove('active');
+          activeTooltip = null;
+        }
+      });
+      
+      // Herpositioneer bij scrollen of resize
+      let resizeTimeout;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function() {
+          if (activeTooltip) {
+            const icon = activeTooltip.closest('.info-icon');
+            if (icon) {
+              const rect = icon.getBoundingClientRect();
+              const tooltipWidth = activeTooltip.offsetWidth || 320;
+              const viewportWidth = window.innerWidth;
+              let left = rect.right + 10;
+              if (left + tooltipWidth > viewportWidth - 20) {
+                left = rect.left - tooltipWidth - 10;
+                if (left < 20) left = 20;
+              }
+              activeTooltip.style.left = left + 'px';
+              activeTooltip.style.top = Math.max(20, rect.top - 10) + 'px';
+            }
+          }
+        }, 100);
       });
     });
 
