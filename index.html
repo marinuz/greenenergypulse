@@ -517,22 +517,92 @@
         -webkit-overflow-scrolling: touch;
       }
     }
+
+    /* Language Toggle */
+    .language-toggle-container {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .language-toggle-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-light);
+    }
+    .language-toggle {
+      position: relative;
+      display: inline-flex;
+      background-color: var(--background-light);
+      border-radius: 999px;
+      padding: 4px;
+      border: 1px solid var(--border-color);
+    }
+    .language-option {
+      padding: 8px 20px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: var(--text-light);
+      background: transparent;
+      border: none;
+      position: relative;
+      z-index: 1;
+    }
+    .language-option.active {
+      color: var(--white);
+    }
+    .language-slider {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: calc(50% - 4px);
+      height: calc(100% - 8px);
+      background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+      border-radius: 999px;
+      transition: transform 0.3s ease;
+      box-shadow: 0 2px 8px rgba(10,79,163,0.3);
+    }
+    .language-toggle[data-lang="fr"] .language-slider {
+      transform: translateX(100%);
+    }
+    
+    @media (max-width: 768px) {
+      .language-toggle-container {
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 
 <body>
   <div id="disclaimer-overlay" class="disclaimer-overlay" role="dialog" aria-modal="true" aria-labelledby="disclaimer-title">
     <div class="disclaimer-modal">
-      <h2 id="disclaimer-title">Belangrijke disclaimer</h2>
-      <p>
+      <h2 id="disclaimer-title" data-translate="disclaimer-title">Belangrijke disclaimer</h2>
+      <p data-translate="disclaimer-text">
         Dit rekenmodel geeft uitsluitend een indicatie. Werkelijke opbrengsten, kosten en besparingen zijn afhankelijk
         van uw installatie, gedrag en marktprijzen en kunnen sterk afwijken van de getoonde resultaten. U kunt hieraan
         geen rechten ontlenen.
       </p>
-      <button type="button" id="acknowledge-disclaimer">Ik begrijp het</button>
+      <button type="button" id="acknowledge-disclaimer" data-translate="disclaimer-button">Ik begrijp het</button>
     </div>
   </div>
   <div class="layout-container">
+    <!-- Language Toggle -->
+    <div class="full-width">
+      <div class="language-toggle-container">
+        <span class="language-toggle-label">Taal / Langue:</span>
+        <div class="language-toggle" id="languageToggle" data-lang="nl">
+          <div class="language-slider"></div>
+          <button class="language-option active" data-lang="nl" onclick="switchLanguage('nl')">NL</button>
+          <button class="language-option" data-lang="fr" onclick="switchLanguage('fr')">FR</button>
+        </div>
+      </div>
+    </div>
+
     <div class="full-width hero-header">
       <div class="logo-wrap">
         <img src="https://assets.bettyblocks.com/8d6bac1c72cb450786e8d4254c52be68_assets/files/itho-logo-2021.svg" alt="Itho Daalderop logo">
@@ -542,19 +612,19 @@
     <details class="panel full-width explanation-block collapse-panel">
       <summary>
         <div class="explanation-title">
-          <span>Toelichting Green Energy Pulse-inzichtentool</span>
+          <span data-translate="explanation-title">Toelichting Green Energy Pulse-inzichtentool</span>
           
         </div>
         <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </summary>
       <div class="collapse-content">
-        <p>
+        <p data-translate="explanation-intro">
           Deze simulatie richt zich uitsluitend op de combinatie van de Green Energy Pulse met de 
           Nymo-dimmer (standaard meegeleverd bij de Green Energy Pulse). De regeling wordt het hele jaar door <strong>uur voor uur</strong> 
           doorgerekend en bepaalt hoeveel zonne-overschot direct in de boiler wordt benut.
         </p>
         <ul>
-          <li>
+          <li data-translate="explanation-variable">
             <strong>Variabele sturing:</strong> vanaf een overschot van 100 W wordt het beschikbare vermogen nauwkeurig naar de
             boiler gestuurd, tot het ingestelde <em>maximale boilervermogen</em> is bereikt.
           </li>
@@ -567,19 +637,19 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="18 15 12 9 6 15"/>
       </svg>
-      <span>Wijzig instellingen</span>
+      <span data-translate="settings-arrow">Wijzig instellingen</span>
     </div>
 
     <div class="main-grid">
       <div class="panel input-panel" id="input-panel">
-        <h2>Configuratie</h2>
+        <h2 data-translate="config-title">Configuratie</h2>
         <input type="hidden" id="boiler-modus" value="nymo-dimmer">
 
-        <h3>Zonne-installatie</h3>
+        <h3 data-translate="solar-installation">Zonne-installatie</h3>
         <div class="input-group">
-          <label for="aantal-panelen">Aantal zonnepanelen</label>
+          <label for="aantal-panelen" data-translate="number-of-panels">Aantal zonnepanelen</label>
           <select id="aantal-panelen" onchange="simuleer()">
-            <option value="">Selecteer aantal panelen</option>
+            <option value="" data-translate="select-panels">Selecteer aantal panelen</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -608,15 +678,15 @@
           </select>
         </div>
         <div class="input-group">
-          <label for="installatie-jaar">Installatiejaar</label>
+          <label for="installatie-jaar" data-translate="installation-year">Installatiejaar</label>
           <select id="installatie-jaar" onchange="simuleer()"></select>
           <p class="helper-text" id="totaal-wp-indicator"></p>
         </div>
 
-        <h3>Boiler &amp; Huishouden</h3>
+        <h3 data-translate="boiler-household">Boiler &amp; Huishouden</h3>
         <div class="input-group">
           <label for="volume-boiler" class="label-with-info">
-            <span>Volume boiler</span>
+            <span data-translate="boiler-volume">Volume boiler</span>
             <span class="info-icon">
               i
               <div class="info-tooltip">
@@ -638,16 +708,16 @@
           </select>
         </div>
         <div class="input-group">
-          <label for="aantal-personen">Aantal personen huishouden</label>
+          <label for="aantal-personen" data-translate="number-of-persons">Aantal personen huishouden</label>
           <select id="aantal-personen" onchange="simuleer()">
-            <option value="" selected>Selecteer aantal personen</option>
+            <option value="" selected data-translate="select-persons">Selecteer aantal personen</option>
             <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
           </select>
         </div>
         <div class="input-group">
           <label class="checkbox-label" for="dwtw-actief">
             <input type="checkbox" id="dwtw-actief" onchange="simuleer()">
-            Itho Daalderop Douche-WTW 
+            <span data-translate="itho-shower">Itho Daalderop Douche-WTW</span>
           </label>
         </div>
         <!-- Drempels blijven bestaan in code, maar zijn altijd verborgen in NYMO-modus -->
@@ -663,9 +733,9 @@
           </div>
         </div>
 
-        <h3>Financiële Instellingen</h3>
+        <h3 data-translate="financial-settings">Financiële Instellingen</h3>
         <div class="input-group" id="gasprijs-group">
-          <label for="gasprijs">Gasprijs (kies eenheid)</label>
+          <label for="gasprijs" data-translate="gas-price-label">Gasprijs (kies eenheid)</label>
           <div class="unit-toggle" id="gasprijs-unit-toggle" role="group" aria-label="Gasprijs eenheid">
             <button type="button" class="unit-option active" data-unit="per-m3" onclick="setGasprijsUnit('per-m3', event)" aria-pressed="true">&euro;/m&sup3;</button>
             <button type="button" class="unit-option" data-unit="per-kwh" onclick="setGasprijsUnit('per-kwh', event)" aria-pressed="false">&euro;/kWh</button>
@@ -674,17 +744,17 @@
           <input type="hidden" id="gasprijs-unit" value="per-m3">
         </div>
         <div class="input-group collapsed" id="stroomprijs-group">
-          <label for="stroomprijs">Stroomprijs (&euro;/kWh)</label>
+          <label for="stroomprijs" data-translate="electricity-price-label">Stroomprijs (&euro;/kWh)</label>
           <input type="number" id="stroomprijs" step="0.01" value="0.25" oninput="simuleer()">
         </div>
         <div class="input-group">
-          <label for="teruglevertarief">Terugleververgoeding (&euro;/kWh)</label>
+          <label for="teruglevertarief" data-translate="feed-in-tariff-label">Terugleververgoeding (&euro;/kWh)</label>
           <input type="number" id="teruglevertarief" step="0.001" value="0.025" oninput="simuleer()">
         </div>
       </div>
 
       <div class="panel results-panel">
-        <h2>Jaarresultaat</h2>
+        <h2 data-translate="yearly-result">Jaarresultaat</h2>
 
         <!-- Besparing met bandbreedte in een breed kader bovenaan -->
         <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border: 1px solid #e0e0e0; position: relative; overflow: hidden;">
@@ -696,7 +766,7 @@
               <path d="M12 12V7H9"></path><path d="M15 12h-3"></path>
             </svg>
             <div>
-              <div style="font-size: 0.9rem; color: var(--text-light); font-weight: 500;">Netto Winst (door zon)</div>
+              <div style="font-size: 0.9rem; color: var(--text-light); font-weight: 500;" data-translate="net-profit-label">Netto Winst (door zon)</div>
               <div id="euro-besparing" style="font-size: 2.5rem; font-weight: 700; color: var(--primary-color); line-height: 1.1;">&euro;0,00</div>
             </div>
           </div>
@@ -710,12 +780,12 @@
                 <path d="M17 19.5A2.5 2.5 0 0 0 19.5 17H20v-1a2 2 0 0 0-2-2H2"></path>
                 <path d="M2 9.5A2.5 2.5 0 0 1 4.5 7H8V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2h3.5A2.5 2.5 0 0 1 22 9.5V15a2 2 0 0 1-2 2H3a1 1 0 0 0-1 1z"></path>
               </svg>
-              CO&#8322; Besparing
+              <span data-translate="co2-savings">CO&#8322; Besparing</span>
               <span class="info-icon">
                 i
                 <div class="info-tooltip">
-                  <h4>CO₂ Besparing</h4>
-                  <p style="margin: 0; line-height: 1.6;">Berekend op basis van het bespaard gas. Per m³ gas wordt 1,884 kg CO₂ uitgestoten. Door uw boiler met zonne-energie te verwarmen in plaats van gas, bespaart u deze CO₂-uitstoot.</p>
+                  <h4 data-translate="co2-savings-info-title">CO₂ Besparing</h4>
+                  <p style="margin: 0; line-height: 1.6;" data-translate="co2-savings-info-text">Berekend op basis van het bespaard gas. Per m³ gas wordt 1,884 kg CO₂ uitgestoten. Door uw boiler met zonne-energie te verwarmen in plaats van gas, bespaart u deze CO₂-uitstoot.</p>
                 </div>
               </span>
             </div>
@@ -725,12 +795,12 @@
           <div class="summary-box">
             <div class="label">
               <span style="font-size: 24px; line-height: 1;">🌳</span>
-              Gelijk aan aantal bomen
+              <span data-translate="equivalent-trees">Gelijk aan aantal bomen</span>
               <span class="info-icon">
                 i
                 <div class="info-tooltip">
-                  <h4>Bomen equivalent</h4>
-                  <p style="margin: 0; line-height: 1.6;">Een boom neemt gemiddeld 25 kg CO₂ per jaar op. Dit getal toont hoeveel bomen nodig zijn om dezelfde hoeveelheid CO₂ op te nemen als u bespaart met de Green Energy Pulse.</p>
+                  <h4 data-translate="trees-info-title">Bomen equivalent</h4>
+                  <p style="margin: 0; line-height: 1.6;" data-translate="trees-info-text">Een boom neemt gemiddeld 25 kg CO₂ per jaar op. Dit getal toont hoeveel bomen nodig zijn om dezelfde hoeveelheid CO₂ op te nemen als u bespaart met de Green Energy Pulse.</p>
                 </div>
               </span>
             </div>
@@ -743,12 +813,12 @@
                 <circle cx="12" cy="12" r="10"></circle>
                 <path d="M12 6v6l4 2"></path>
               </svg>
-              Zelfconsumptie percentage
+              <span data-translate="self-consumption-percentage">Zelfconsumptie percentage</span>
               <span class="info-icon">
                 i
                 <div class="info-tooltip">
-                  <h4>Zelfconsumptie</h4>
-                  <p style="margin: 0; line-height: 1.6;">Het percentage van uw zonne-energie dat u zelf verbruikt in plaats van teruglevering aan het net. Dit omvat basisverbruik en energie naar de boiler. Hoe hoger dit percentage, hoe beter u uw zonnepanelen benut.</p>
+                  <h4 data-translate="self-consumption-info-title">Zelfconsumptie</h4>
+                  <p style="margin: 0; line-height: 1.6;" data-translate="self-consumption-info-text">Het percentage van uw zonne-energie dat u zelf verbruikt in plaats van teruglevering aan het net. Dit omvat basisverbruik en energie naar de boiler. Hoe hoger dit percentage, hoe beter u uw zonnepanelen benut.</p>
                 </div>
               </span>
             </div>
@@ -762,12 +832,12 @@
                 <path d="M21.05 11.23A9 9 0 0 0 12.02 3h-.04a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9a9 9 0 0 0 9-9h-9"></path>
                 <path d="M12 12v.01"></path>
               </svg>
-              Benutte Zonne-energie
+              <span data-translate="utilized-solar-energy">Benutte Zonne-energie</span>
               <span class="info-icon">
                 i
                 <div class="info-tooltip">
-                  <h4>Benutte Zonne-energie</h4>
-                  <p style="margin: 0; line-height: 1.6;">De totale hoeveelheid zonne-energie die in de boiler is gestopt. De Green Energy Pulse gebruikt automatisch het zonne-overschot om water op te warmen, vanaf 100W overschot.</p>
+                  <h4 data-translate="utilized-solar-info-title">Benutte Zonne-energie</h4>
+                  <p style="margin: 0; line-height: 1.6;" data-translate="utilized-solar-info-text">De totale hoeveelheid zonne-energie die in de boiler is gestopt. De Green Energy Pulse gebruikt automatisch het zonne-overschot om water op te warmen, vanaf 100W overschot.</p>
                 </div>
               </span>
             </div>
@@ -780,12 +850,12 @@
                 <path d="M11.5,15.5c2.4-2,3.3-3.6,3.3-4.9a3.7,3.7,0,0,0-7.4,0c0,1.3,1,2.9,3.3,4.9Z"></path>
                 <path d="M12.2,4.6l.6-1a1,1,0,0,0-1.6-.9l-2.4,4.2c-.8,1.3-1,2.5-1,3.2a6,6,0,0,0,12,0c0-.7-.3-1.9-1-3.2L12.2,4.6Z"></path>
               </svg>
-              Bespaard Gas
+              <span data-translate="saved-gas">Bespaard Gas</span>
               <span class="info-icon">
                 i
                 <div class="info-tooltip">
-                  <h4>Bespaard Gas</h4>
-                  <p style="margin: 0; line-height: 1.6;">De hoeveelheid gas die u bespaart door warm water uit de boiler te gebruiken in plaats van gasgestookte verwarming. Berekend op basis van de energie die uit de boiler komt bij tapmoment(en), met 1 m³ gas = 9,77 kWh.</p>
+                  <h4 data-translate="saved-gas-info-title">Bespaard Gas</h4>
+                  <p style="margin: 0; line-height: 1.6;" data-translate="saved-gas-info-text">De hoeveelheid gas die u bespaart door warm water uit de boiler te gebruiken in plaats van gasgestookte verwarming. Berekend op basis van de energie die uit de boiler komt bij tapmoment(en), met 1 m³ gas = 9,77 kWh.</p>
                 </div>
               </span>
             </div>
@@ -821,13 +891,13 @@
         <div id="suggestion-container" class="hidden"></div>
 
         <div class="tab-nav">
-          <div class="tab active" onclick="switchTab('chart-tab')">Grafiek</div>
-          <div class="tab" onclick="switchTab('table-tab')">Tabel</div>
-          <div class="tab" onclick="switchTab('projection-tab')">20-jaars Projectie</div>
+          <div class="tab active" onclick="switchTab('chart-tab')" data-translate="tab-chart">Grafiek</div>
+          <div class="tab" onclick="switchTab('table-tab')" data-translate="tab-table">Tabel</div>
+          <div class="tab" onclick="switchTab('projection-tab')" data-translate="tab-projection">20-jaars Projectie</div>
         </div>
         <div id="chart-tab" class="tab-content">
           <div class="chart-container" id="chart"></div>
-          <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-light); line-height: 1.6;">
+          <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-light); line-height: 1.6;" data-translate="chart-explanation">
             <strong>Toelichting:</strong> Deze grafiek toont de hoeveelheid zonne-energie die per maand in de boiler wordt gestopt. 
             De hogere waarden in de koudere maanden (met name maart) komen doordat het leidingwater dan kouder is (10°C in winter vs. 15°C in zomer). 
             Hierdoor is er meer energie nodig om het water op te warmen tot de gewenste temperatuur.
@@ -846,7 +916,7 @@
   <details class="panel full-width calc-panel collapse-panel">
     <summary>
       <div class="explanation-title">
-        <span>Advanced Tap & Geavanceerde Modus</span>
+        <span data-translate="advanced-mode-title">Advanced Tap & Geavanceerde Modus</span>
       </div>
       <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </summary>
@@ -854,9 +924,9 @@
       <div class="input-group">
         <label class="checkbox-label" for="advanced-modus">
           <input type="checkbox" id="advanced-modus" onchange="toggleAdvancedPanel()">
-          Activeer advanced modus
+          <span data-translate="activate-advanced-mode">Activeer advanced modus</span>
         </label>
-        <p class="helper-text">Gebruik tapmomenten, tapgrafiek en geavanceerde metrics om de regeling verder te fine-tunen.</p>
+        <p class="helper-text" data-translate="advanced-mode-helper">Gebruik tapmomenten, tapgrafiek en geavanceerde metrics om de regeling verder te fine-tunen.</p>
       </div>
       <div id="advanced-panel" class="advanced-panel collapsed">
         <p style="margin-top:0;">Stel tot drie tapmomenten per dag in. Volumes zijn liters 40 °C water voor het hele huishouden.</p>
@@ -878,133 +948,468 @@
   </details>
 
   <div class="panel full-width" style="margin-top: 40px;">
-    <h2 style="margin-top: 0; margin-bottom: 30px; color: var(--primary-color);">Veelgestelde Vragen</h2>
+    <h2 style="margin-top: 0; margin-bottom: 30px; color: var(--primary-color);" data-translate="faq-title">Veelgestelde Vragen</h2>
     
     <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
       <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-weight: 600; color: var(--primary-color);">Wat kan ik besparen met de Green Energy Pulse?</span>
+        <span style="font-weight: 600; color: var(--primary-color);" data-translate="faq1-q">Wat kan ik besparen met de Green Energy Pulse?</span>
         <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </summary>
       <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
-        <p>Je besparing is afhankelijk van de juiste capaciteit (liters, afhankelijk van gezinsgrootte en gebruik), maar een gemiddeld huishouden kan jaarlijks tot meer dan tientallen euro's besparen. Voor een indicatieve berekening kunt u onze tool gebruiken.</p>
+        <p data-translate="faq1-a">Je besparing is afhankelijk van de juiste capaciteit (liters, afhankelijk van gezinsgrootte en gebruik), maar een gemiddeld huishouden kan jaarlijks tot meer dan tientallen euro's besparen. Voor een indicatieve berekening kunt u onze tool gebruiken.</p>
       </div>
     </details>
 
     <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
       <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-weight: 600; color: var(--primary-color);">Waarom kan ik alleen een 80L, 120L en een 150L boiler selecteren in de berkeeningstool?</span>
+        <span style="font-weight: 600; color: var(--primary-color);" data-translate="faq2-q">Waarom kan ik alleen een 80L, 120L en een 150L boiler selecteren in de berkeeningstool?</span>
         <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </summary>
       <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
-        <p>De Green Energy Pulse is alleen leverbaar in de uitvoeringen 80L, 120L, 150L.</p>
+        <p data-translate="faq2-a">De Green Energy Pulse is alleen leverbaar in de uitvoeringen 80L, 120L, 150L.</p>
       </div>
     </details>
 
     <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
       <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-weight: 600; color: var(--primary-color);">Hoe schat ik de nodige capaciteit van mijn boiler zo correct mogelijk in?</span>
+        <span style="font-weight: 600; color: var(--primary-color);" data-translate="faq3-q">Hoe schat ik de nodige capaciteit van mijn boiler zo correct mogelijk in?</span>
         <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </summary>
       <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
-        <p>Itho Daalderop heeft een tool beschikbaar, de besparingstool is gratis beschikbaar, de tool helpt bij het inschatten van de besparing op jaarbasis.</p>
+        <p data-translate="faq3-a">Itho Daalderop heeft een tool beschikbaar, de besparingstool is gratis beschikbaar, de tool helpt bij het inschatten van de besparing op jaarbasis.</p>
       </div>
     </details>
 
     <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
       <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-weight: 600; color: var(--primary-color);">Welke boiler heb ik nodig? hulp bij de keuze van uw elektrische boiler.</span>
+        <span style="font-weight: 600; color: var(--primary-color);" data-translate="faq4-q">Welke boiler heb ik nodig? hulp bij de keuze van uw elektrische boiler.</span>
         <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </summary>
       <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
-        <p><a href="https://ithodaalderop.compano.com/Data/Environments/000001/Attachment/Bijlage/A05_Warm%20water/A05_01_Boilers%20Groot/B01_04_PRT/01_WEB/24_0450%20Brochure%20Warm%20water%20%20Boilers%20%20E-boiler%20Commbroch%20boilers_WEB.pdf" target="_blank" style="color: var(--secondary-color); text-decoration: underline;">Online brochure boilers</a></p>
+        <p data-translate="faq4-a"><a href="https://ithodaalderop.compano.com/Data/Environments/000001/Attachment/Bijlage/A05_Warm%20water/A05_01_Boilers%20Groot/B01_04_PRT/01_WEB/24_0450%20Brochure%20Warm%20water%20%20Boilers%20%20E-boiler%20Commbroch%20boilers_WEB.pdf" target="_blank" style="color: var(--secondary-color); text-decoration: underline;">Online brochure boilers</a></p>
       </div>
     </details>
 
     <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
       <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-weight: 600; color: var(--primary-color);">Hoe wordt de opbrengst van de zonnepanelen berekend?</span>
+        <span style="font-weight: 600; color: var(--primary-color);" data-translate="faq5-q">Hoe wordt de opbrengst van de zonnepanelen berekend?</span>
         <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </summary>
       <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
-        <p>De tool maakt gebruik van de gemiddelde opbrengst van zonnepanelen in Nederland. De tool houdt ook rekening met de gemiddelde dakoriëntatie en de Hellingshoek en de aantal zonuren in Nederland. <a href="https://www.mdpi.com/1996-1073/17/20/5154" target="_blank" style="color: var(--secondary-color); text-decoration: underline;">Onderzoek</a></p>
+        <p data-translate="faq5-a">De tool maakt gebruik van de gemiddelde opbrengst van zonnepanelen in Nederland. De tool houdt ook rekening met de gemiddelde dakoriëntatie en de Hellingshoek en de aantal zonuren in Nederland. <a href="https://www.mdpi.com/1996-1073/17/20/5154" target="_blank" style="color: var(--secondary-color); text-decoration: underline;">Onderzoek</a></p>
       </div>
     </details>
 
     <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
       <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-weight: 600; color: var(--primary-color);">Ik beschik niet over een douche wtw is de Green Energy Pulse wel geschikt voor mijn situatie?</span>
+        <span style="font-weight: 600; color: var(--primary-color);" data-translate="faq6-q">Ik beschik niet over een douche wtw is de Green Energy Pulse wel geschikt voor mijn situatie?</span>
         <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </summary>
       <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
-        <p>Met de tool kunt u een indicatieve berekening maken van de extra opbrengt van een douche-WTW. Het is echter niet noodzakelijk om over een douche-WTW te beschikken: de Green Energy Pulse is ook geschikt voor situaties zonder douche-WTW.</p>
+        <p data-translate="faq6-a">Met de tool kunt u een indicatieve berekening maken van de extra opbrengt van een douche-WTW. Het is echter niet noodzakelijk om over een douche-WTW te beschikken: de Green Energy Pulse is ook geschikt voor situaties zonder douche-WTW.</p>
       </div>
     </details>
 
     <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
       <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-weight: 600; color: var(--primary-color);">Welk gas tarief kan ik het beste invullen in de berekeningstool?</span>
+        <span style="font-weight: 600; color: var(--primary-color);" data-translate="faq7-q">Welk gas tarief kan ik het beste invullen in de berekeningstool?</span>
         <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </summary>
       <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
-        <p>Het jaarlijkse tarief voor gas in Nederland varieert sterk, maar verwacht in januari 2026 een gemiddelde prijs van rond de €1,18 tot €1,33 per m³, exclusief vaste kosten, met variaties afhankelijk van je leverancier en contract (vast/variabel). Voor het juiste tarief verwijzen wij naar uw huidige contract met uw energie leverancier.</p>
+        <p data-translate="faq7-a">Het jaarlijkse tarief voor gas in Nederland varieert sterk, maar verwacht in januari 2026 een gemiddelde prijs van rond de €1,18 tot €1,33 per m³, exclusief vaste kosten, met variaties afhankelijk van je leverancier en contract (vast/variabel). Voor het juiste tarief verwijzen wij naar uw huidige contract met uw energie leverancier.</p>
       </div>
     </details>
 
     <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
       <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-weight: 600; color: var(--primary-color);">Wij overwegen om zonnepanelen bij te laten plaatsen voor meer rendabiliteit met de Green Energy Pulse is dit een goede investering?</span>
+        <span style="font-weight: 600; color: var(--primary-color);" data-translate="faq8-q">Wij overwegen om zonnepanelen bij te laten plaatsen voor meer rendabiliteit met de Green Energy Pulse is dit een goede investering?</span>
         <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </summary>
       <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
-        <p>Het bijplaatsen van zonnepanelen kan een goede investering zijn om de energiekosten verder te verlagen, zeker in combinatie met de Green Energy Pulse. De uiteindelijke rendabiliteit hangt echter af van uw huidige installatie, de beschikbare dakruimte en uw energiebehoefte. Het is daaraan aan te raden een vakkundige installateur in te schakelen voor een analyse en offerte. Daarnaast kunt u onze tool gebruiken om een indicatieve berekening te maken van de mogelijke opbrengsten.</p>
+        <p data-translate="faq8-a">Het bijplaatsen van zonnepanelen kan een goede investering zijn om de energiekosten verder te verlagen, zeker in combinatie met de Green Energy Pulse. De uiteindelijke rendabiliteit hangt echter af van uw huidige installatie, de beschikbare dakruimte en uw energiebehoefte. Het is daaraan aan te raden een vakkundige installateur in te schakelen voor een analyse en offerte. Daarnaast kunt u onze tool gebruiken om een indicatieve berekening te maken van de mogelijke opbrengsten.</p>
       </div>
     </details>
 
     <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
       <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-weight: 600; color: var(--primary-color);">Met welke douchetijd houdt de tool rekening?</span>
+        <span style="font-weight: 600; color: var(--primary-color);" data-translate="faq9-q">Met welke douchetijd houdt de tool rekening?</span>
         <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </summary>
       <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
-        <p>De tool houdt rekening met een gemiddelde doucheduur van 8 minuten en het gemiddelde aantal liter water per persoon per dag voor het douchen. Dit komt uit op 45 liter/dag. In de toel wordt een advies gegeven op basis van zuinig comfortabel douchen en comfortabel douchen.</p>
+        <p data-translate="faq9-a">De tool houdt rekening met een gemiddelde doucheduur van 8 minuten en het gemiddelde aantal liter water per persoon per dag voor het douchen. Dit komt uit op 45 liter/dag. In de toel wordt een advies gegeven op basis van zuinig comfortabel douchen en comfortabel douchen.</p>
       </div>
     </details>
 
     <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
       <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-weight: 600; color: var(--primary-color);">Wat zijn mijn terugeverkosten voor onbenutte zonnestroom</span>
+        <span style="font-weight: 600; color: var(--primary-color);" data-translate="faq10-q">Wat zijn mijn terugeverkosten voor onbenutte zonnestroom</span>
         <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </summary>
       <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
-        <p>De terugleververgoeding in Nederland bedraagt in 2026 circa €0,025 per kWh. Het is aan te raden om uw meest actuele tarief in te voeren in de rekentool voor een zo nauwkeurig mogelijke berekening. Houd er daarnaast rekening mee dat de salderingsregeling per 1 januari 2027 volledig afgeschaft, waardoor het financieel nog belangrijk wordt om opgewekte zonnestroom zoveel mogelijk direct zelf te benutten.</p>
+        <p data-translate="faq10-a">De terugleververgoeding in Nederland bedraagt in 2026 circa €0,025 per kWh. Het is aan te raden om uw meest actuele tarief in te voeren in de rekentool voor een zo nauwkeurig mogelijke berekening. Houd er daarnaast rekening mee dat de salderingsregeling per 1 januari 2027 volledig afgeschaft, waardoor het financieel nog belangrijk wordt om opgewekte zonnestroom zoveel mogelijk direct zelf te benutten.</p>
       </div>
     </details>
 
     <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
       <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-weight: 600; color: var(--primary-color);">Wat houdt zelfconsumptie percentage in?</span>
+        <span style="font-weight: 600; color: var(--primary-color);" data-translate="faq11-q">Wat houdt zelfconsumptie percentage in?</span>
         <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </summary>
       <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
-        <p>Het zelfconsumptiepercentage geeft aan welk deel van de stroom die u zelf opwekt (bijvoorbeeld met zonnepanelen) u direct in huis gebruikt. Dit is de stroom die u niet terugleverd aan het elektriciteitsnet. Hoe hoger dit percentage, hoe beter dat is voor uw portemonnee. Zelf gebruikte stroom bespaart namelijk de volledige stroomprijs, terwijl u voor teruggeleverde stroom meestal een lagere vergoeding krijgt. Met een boiler, zoals het benutten van stroom voor warm water, kunt u uw zelfconsumptie verhogen.</p>
+        <p data-translate="faq11-a">Het zelfconsumptiepercentage geeft aan welk deel van de stroom die u zelf opwekt (bijvoorbeeld met zonnepanelen) u direct in huis gebruikt. Dit is de stroom die u niet terugleverd aan het elektriciteitsnet. Hoe hoger dit percentage, hoe beter dat is voor uw portemonnee. Zelf gebruikte stroom bespaart namelijk de volledige stroomprijs, terwijl u voor teruggeleverde stroom meestal een lagere vergoeding krijgt. Met een boiler, zoals het benutten van stroom voor warm water, kunt u uw zelfconsumptie verhogen.</p>
       </div>
     </details>
   </div>
 
   <div class="panel full-width disclaimer-panel" aria-live="polite" style="margin-top: 40px;">
-    <h3 style="margin-top:0; color: var(--primary-color);">Disclaimer</h3>
-    <p>
+    <h3 style="margin-top:0; color: var(--primary-color);" data-translate="disclaimer-bottom-title">Disclaimer</h3>
+    <p data-translate="disclaimer-bottom-text">
       De resultaten uit dit hulpmiddel vormen slechts een indicatie en zijn gebaseerd op aannames die mogelijk niet op uw
       situatie van toepassing zijn. Werkelijke prestaties, prijzen, subsidies en besparingen kunnen aanzienlijk afwijken.
       Gebruik dit model uitsluitend ter inspiratie; er kunnen geen rechten aan worden ontleend.
     </p>
-    <p style="margin-top: 10px; font-size: 0.9rem;">
+    <p style="margin-top: 10px; font-size: 0.9rem;" data-translate="disclaimer-notice">
       <strong>Let op:</strong> Dit model gebruikt een vast zonprofiel gebaseerd op historische data. 
       De gasprijs loopt automatisch op van €1,35/m³ (2027) naar €1,50/m³ (2032) om de impact van ETS2 mee te nemen.
     </p>
   </div>
 
   <script>
+    // Taalvertalingen
+    const translations = {
+      nl: {
+        // Disclaimer
+        'disclaimer-title': 'Belangrijke disclaimer',
+        'disclaimer-text': 'Dit rekenmodel geeft uitsluitend een indicatie. Werkelijke opbrengsten, kosten en besparingen zijn afhankelijk van uw installatie, gedrag en marktprijzen en kunnen sterk afwijken van de getoonde resultaten. U kunt hieraan geen rechten ontlenen.',
+        'disclaimer-button': 'Ik begrijp het',
+        
+        // Toelichting
+        'explanation-title': 'Toelichting Green Energy Pulse-inzichtentool',
+        'explanation-intro': 'Deze simulatie richt zich uitsluitend op de combinatie van de Green Energy Pulse met de Nymo-dimmer (standaard meegeleverd bij de Green Energy Pulse). De regeling wordt het hele jaar door <strong>uur voor uur</strong> doorgerekend en bepaalt hoeveel zonne-overschot direct in de boiler wordt benut.',
+        'explanation-variable': '<strong>Variabele sturing:</strong> vanaf een overschot van 100 W wordt het beschikbare vermogen nauwkeurig naar de boiler gestuurd, tot het ingestelde <em>maximale boilervermogen</em> is bereikt.',
+        
+        // Instellingen pijl
+        'settings-arrow': 'Wijzig instellingen',
+        
+        // Configuratie
+        'config-title': 'Configuratie',
+        'solar-installation': 'Zonne-installatie',
+        'number-of-panels': 'Aantal zonnepanelen',
+        'select-panels': 'Selecteer aantal panelen',
+        'installation-year': 'Installatiejaar',
+        'boiler-household': 'Boiler & Huishouden',
+        'boiler-volume': 'Volume boiler',
+        'choose-volume': 'Kies de juiste boilerinhoud',
+        'liter': 'Liter',
+        'number-of-persons': 'Aantal personen huishouden',
+        'select-persons': 'Selecteer aantal personen',
+        'person': 'persoon',
+        'persons': 'personen',
+        'itho-shower': 'Itho Daalderop Douche-WTW',
+        
+        // Financiële Instellingen
+        'financial-settings': 'Financiële Instellingen',
+        'gas-price-label': 'Gasprijs (kies eenheid)',
+        'electricity-price-label': 'Stroomprijs (€/kWh)',
+        'feed-in-tariff-label': 'Terugleververgoeding (€/kWh)',
+        'enter-gas-price': 'Voer gasprijs in',
+        
+        // Resultaten Sectie
+        'yearly-result': 'Jaarresultaat',
+        'net-profit-label': 'Netto Winst (door zon)',
+        'co2-savings': 'CO₂ Besparing',
+        'co2-savings-info-title': 'CO₂ Besparing',
+        'co2-savings-info-text': 'Berekend op basis van het bespaard gas. Per m³ gas wordt 1,884 kg CO₂ uitgestoten. Door uw boiler met zonne-energie te verwarmen in plaats van gas, bespaart u deze CO₂-uitstoot.',
+        'equivalent-trees': 'Gelijk aan aantal bomen',
+        'trees-info-title': 'Bomen equivalent',
+        'trees-info-text': 'Een boom neemt gemiddeld 25 kg CO₂ per jaar op. Dit getal toont hoeveel bomen nodig zijn om dezelfde hoeveelheid CO₂ op te nemen als u bespaart met de Green Energy Pulse.',
+        'self-consumption-percentage': 'Zelfconsumptie percentage',
+        'self-consumption-info-title': 'Zelfconsumptie',
+        'self-consumption-info-text': 'Het percentage van uw zonne-energie dat u zelf verbruikt in plaats van teruglevering aan het net. Dit omvat basisverbruik en energie naar de boiler. Hoe hoger dit percentage, hoe beter u uw zonnepanelen benut.',
+        'utilized-solar-energy': 'Benutte Zonne-energie',
+        'utilized-solar-info-title': 'Benutte Zonne-energie',
+        'utilized-solar-info-text': 'De totale hoeveelheid zonne-energie die in de boiler is gestopt. De Green Energy Pulse gebruikt automatisch het zonne-overschot om water op te warmen, vanaf 100W overschot.',
+        'saved-gas': 'Bespaard Gas',
+        'saved-gas-info-title': 'Bespaard Gas',
+        'saved-gas-info-text': 'De hoeveelheid gas die u bespaart door warm water uit de boiler te gebruiken in plaats van gasgestookte verwarming. Berekend op basis van de energie die uit de boiler komt bij tapmoment(en), met 1 m³ gas = 9,77 kWh.',
+        'shower-behavior-range': 'Bandbreedte op basis van douchgedrag',
+        'economical-shower': 'Zuinig douchen',
+        'average-shower': 'Gemiddeld',
+        'comfortable-shower': 'Comfortabel',
+        'financial-analysis': 'Financiële Analyse (Nymo Dimmer)',
+        'value-saved-gas': 'Waarde bespaard gas (PV):',
+        'lost-feed-in': 'Gederfde teruglevering:',
+        'net-profit-year': 'Netto Winst per Jaar:',
+        'extra-gas-dwtw': 'Extra gasbesparing DWTW:',
+        'personal-suggestions': 'Persoonlijke Suggesties',
+        'months': ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"],
+        
+        // Tabs
+        'tab-chart': 'Grafiek',
+        'tab-table': 'Tabel',
+        'tab-projection': '20-jaars Projectie',
+        'chart-explanation': '<strong>Toelichting:</strong> Deze grafiek toont de hoeveelheid zonne-energie die per maand in de boiler wordt gestopt. De hogere waarden in de koudere maanden (met name maart) komen doordat het leidingwater dan kouder is (10°C in winter vs. 15°C in zomer). Hierdoor is er meer energie nodig om het water op te warmen tot de gewenste temperatuur.',
+        
+        // Advanced Mode
+        'advanced-mode-title': 'Advanced Tap & Geavanceerde Modus',
+        'activate-advanced-mode': 'Activeer advanced modus',
+        'advanced-mode-helper': 'Gebruik tapmomenten, tapgrafiek en geavanceerde metrics om de regeling verder te fine-tunen.',
+        
+        // FAQ
+        'faq-title': 'Veelgestelde Vragen',
+        'faq1-q': 'Wat kan ik besparen met de Green Energy Pulse?',
+        'faq1-a': 'Je besparing is afhankelijk van de juiste capaciteit (liters, afhankelijk van gezinsgrootte en gebruik), maar een gemiddeld huishouden kan jaarlijks tot meer dan tientallen euro\'s besparen. Voor een indicatieve berekening kunt u onze tool gebruiken.',
+        'faq2-q': 'Waarom kan ik alleen een 80L, 120L en een 150L boiler selecteren in de berekeningst tool?',
+        'faq2-a': 'De Green Energy Pulse is alleen leverbaar in de uitvoeringen 80L, 120L, 150L.',
+        'faq3-q': 'Hoe schat ik de nodige capaciteit van mijn boiler zo correct mogelijk in?',
+        'faq3-a': 'Itho Daalderop heeft een tool beschikbaar, de besparingstool is gratis beschikbaar, de tool helpt bij het inschatten van de besparing op jaarbasis.',
+        'faq4-q': 'Welke boiler heb ik nodig? hulp bij de keuze van uw elektrische boiler.',
+        'faq4-a': '<a href="https://ithodaalderop.compano.com/Data/Environments/000001/Attachment/Bijlage/A05_Warm%20water/A05_01_Boilers%20Groot/B01_04_PRT/01_WEB/24_0450%20Brochure%20Warm%20water%20%20Boilers%20%20E-boiler%20Commbroch%20boilers_WEB.pdf" target="_blank" style="color: var(--secondary-color); text-decoration: underline;">Online brochure boilers</a>',
+        'faq5-q': 'Hoe wordt de opbrengst van de zonnepanelen berekend?',
+        'faq5-a': 'De tool maakt gebruik van de gemiddelde opbrengst van zonnepanelen in Nederland. De tool houdt ook rekening met de gemiddelde dakoriëntatie en de Hellingshoek en de aantal zonuren in Nederland. <a href="https://www.mdpi.com/1996-1073/17/20/5154" target="_blank" style="color: var(--secondary-color); text-decoration: underline;">Onderzoek</a>',
+        'faq6-q': 'Ik beschik niet over een douche wtw is de Green Energy Pulse wel geschikt voor mijn situatie?',
+        'faq6-a': 'Met de tool kunt u een indicatieve berekening maken van de extra opbrengt van een douche-WTW. Het is echter niet noodzakelijk om over een douche-WTW te beschikken: de Green Energy Pulse is ook geschikt voor situaties zonder douche-WTW.',
+        'faq7-q': 'Welk gas tarief kan ik het beste invullen in de berekeningstool?',
+        'faq7-a': 'Het jaarlijkse tarief voor gas in Nederland varieert sterk, maar verwacht in januari 2026 een gemiddelde prijs van rond de €1,18 tot €1,33 per m³, exclusief vaste kosten, met variaties afhankelijk van je leverancier en contract (vast/variabel). Voor het juiste tarief verwijzen wij naar uw huidige contract met uw energie leverancier.',
+        'faq8-q': 'Wij overwegen om zonnepanelen bij te laten plaatsen voor meer rendabiliteit met de Green Energy Pulse is dit een goede investering?',
+        'faq8-a': 'Het bijplaatsen van zonnepanelen kan een goede investering zijn om de energiekosten verder te verlagen, zeker in combinatie met de Green Energy Pulse. De uiteindelijke rendabiliteit hangt echter af van uw huidige installatie, de beschikbare dakruimte en uw energiebehoefte. Het is daaraan aan te raden een vakkundige installateur in te schakelen voor een analyse en offerte. Daarnaast kunt u onze tool gebruiken om een indicatieve berekening te maken van de mogelijke opbrengsten.',
+        'faq9-q': 'Met welke douchetijd houdt de tool rekening?',
+        'faq9-a': 'De tool houdt rekening met een gemiddelde doucheduur van 8 minuten en het gemiddelde aantal liter water per persoon per dag voor het douchen. Dit komt uit op 45 liter/dag. In de toel wordt een advies gegeven op basis van zuinig comfortabel douchen en comfortabel douchen.',
+        'faq10-q': 'Wat zijn mijn terugeverkosten voor onbenutte zonnestroom',
+        'faq10-a': 'De terugleververgoeding in Nederland bedraagt in 2026 circa €0,025 per kWh. Het is aan te raden om uw meest actuele tarief in te voeren in de rekentool voor een zo nauwkeurig mogelijke berekening. Houd er daarnaast rekening mee dat de salderingsregeling per 1 januari 2027 volledig afgeschaft, waardoor het financieel nog belangrijk wordt om opgewekte zonnestroom zoveel mogelijk direct zelf te benutten.',
+        'faq11-q': 'Wat houdt zelfconsumptie percentage in?',
+        'faq11-a': 'Het zelfconsumptiepercentage geeft aan welk deel van de stroom die u zelf opwekt (bijvoorbeeld met zonnepanelen) u direct in huis gebruikt. Dit is de stroom die u niet terugleverd aan het elektriciteitsnet. Hoe hoger dit percentage, hoe beter dat is voor uw portemonnee. Zelf gebruikte stroom bespaart namelijk de volledige stroomprijs, terwijl u voor teruggeleverde stroom meestal een lagere vergoeding krijgt. Met een boiler, zoals het benutten van stroom voor warm water, kunt u uw zelfconsumptie verhogen.',
+        
+        // Bottom Disclaimer
+        'disclaimer-bottom-title': 'Disclaimer',
+        'disclaimer-bottom-text': 'De resultaten uit dit hulpmiddel vormen slechts een indicatie en zijn gebaseerd op aannames die mogelijk niet op uw situatie van toepassing zijn. Werkelijke prestaties, prijzen, subsidies en besparingen kunnen aanzienlijk afwijken. Gebruik dit model uitsluitend ter inspiratie; er kunnen geen rechten aan worden ontleend.',
+        'disclaimer-notice': '<strong>Let op:</strong> Dit model gebruikt een vast zonprofiel gebaseerd op historische data. De gasprijs loopt automatisch op van €1,35/m³ (2027) naar €1,50/m³ (2032) om de impact van ETS2 mee te nemen.',
+        
+        // Oude resultaten labels (blijven bestaan voor compatibiliteit)
+        'financial-title': 'Financieel',
+        'gas-price': 'Gasprijs',
+        'electricity-price': 'Stroomprijs',
+        'feed-in-tariff': 'Terugleververgoeding',
+        'results-title': 'Resultaten',
+        'yearly-savings': 'Jaarlijkse besparing',
+        'gas-saved': 'Gas bespaard',
+        'co2-reduction': 'CO₂-reductie',
+        'self-consumption': 'Eigen verbruik',
+        'solar-to-boiler': 'Zon → Boiler',
+        
+        // Oude tabs (blijven bestaan voor compatibiliteit)
+        'tab-overview': 'Overzicht',
+        'tab-monthly': 'Maandelijks',
+        'tab-financial': 'Financieel',
+        
+        // Maanden
+        'january': 'Jan',
+        'february': 'Feb',
+        'march': 'Mrt',
+        'april': 'Apr',
+        'may': 'Mei',
+        'june': 'Jun',
+        'july': 'Jul',
+        'august': 'Aug',
+        'september': 'Sep',
+        'october': 'Okt',
+        'november': 'Nov',
+        'december': 'Dec'
+      },
+      fr: {
+        // Disclaimer
+        'disclaimer-title': 'Avertissement important',
+        'disclaimer-text': 'Ce modèle de calcul fournit uniquement une indication. Les rendements, coûts et économies réels dépendent de votre installation, comportement et prix du marché et peuvent différer considérablement des résultats affichés. Vous ne pouvez en tirer aucun droit.',
+        'disclaimer-button': 'Je comprends',
+        
+        // Toelichting
+        'explanation-title': 'Explication de l\'outil Green Energy Pulse',
+        'explanation-intro': 'Cette simulation se concentre exclusivement sur la combinaison du Green Energy Pulse avec le variateur Nymo (fourni en standard avec le Green Energy Pulse). Le contrôle est calculé <strong>heure par heure</strong> tout au long de l\'année et détermine la quantité d\'excédent solaire utilisée directement dans le chauffe-eau.',
+        'explanation-variable': '<strong>Contrôle variable:</strong> à partir d\'un excédent de 100 W, la puissance disponible est précisément dirigée vers le chauffe-eau, jusqu\'à ce que la <em>puissance maximale du chauffe-eau</em> définie soit atteinte.',
+        
+        // Instellingen pijl
+        'settings-arrow': 'Modifier les paramètres',
+        
+        // Configuratie
+        'config-title': 'Configuration',
+        'solar-installation': 'Installation solaire',
+        'number-of-panels': 'Nombre de panneaux solaires',
+        'select-panels': 'Sélectionnez le nombre de panneaux',
+        'installation-year': 'Année d\'installation',
+        'boiler-household': 'Chauffe-eau & Ménage',
+        'boiler-volume': 'Volume du chauffe-eau',
+        'choose-volume': 'Choisissez le bon volume de chauffe-eau',
+        'liter': 'Litres',
+        'number-of-persons': 'Nombre de personnes dans le ménage',
+        'select-persons': 'Sélectionnez le nombre de personnes',
+        'person': 'personne',
+        'persons': 'personnes',
+        'itho-shower': 'Itho Daalderop Récupération de chaleur douche',
+        
+        // Financiële Instellingen
+        'financial-settings': 'Paramètres financiers',
+        'gas-price-label': 'Prix du gaz (choisissez l\'unité)',
+        'electricity-price-label': 'Prix de l\'électricité (€/kWh)',
+        'feed-in-tariff-label': 'Tarif d\'injection (€/kWh)',
+        'enter-gas-price': 'Entrez le prix du gaz',
+        
+        // Resultaten Sectie
+        'yearly-result': 'Résultat annuel',
+        'net-profit-label': 'Bénéfice net (par solaire)',
+        'co2-savings': 'Économie CO₂',
+        'co2-savings-info-title': 'Économie CO₂',
+        'co2-savings-info-text': 'Calculé sur la base du gaz économisé. 1,884 kg de CO₂ est émis par m³ de gaz. En chauffant votre chauffe-eau avec de l\'énergie solaire au lieu du gaz, vous économisez cette émission de CO₂.',
+        'equivalent-trees': 'Équivalent nombre d\'arbres',
+        'trees-info-title': 'Équivalent arbres',
+        'trees-info-text': 'Un arbre absorbe en moyenne 25 kg de CO₂ par an. Ce chiffre montre combien d\'arbres sont nécessaires pour absorber la même quantité de CO₂ que vous économisez avec le Green Energy Pulse.',
+        'self-consumption-percentage': 'Pourcentage d\'autoconsommation',
+        'self-consumption-info-title': 'Autoconsommation',
+        'self-consumption-info-text': 'Le pourcentage de votre énergie solaire que vous consommez vous-même au lieu de la réinjecter dans le réseau. Cela comprend la consommation de base et l\'énergie vers le chauffe-eau. Plus ce pourcentage est élevé, mieux vous utilisez vos panneaux solaires.',
+        'utilized-solar-energy': 'Énergie solaire utilisée',
+        'utilized-solar-info-title': 'Énergie solaire utilisée',
+        'utilized-solar-info-text': 'La quantité totale d\'énergie solaire mise dans le chauffe-eau. Le Green Energy Pulse utilise automatiquement l\'excédent solaire pour chauffer l\'eau, à partir de 100W d\'excédent.',
+        'saved-gas': 'Gaz économisé',
+        'saved-gas-info-title': 'Gaz économisé',
+        'saved-gas-info-text': 'La quantité de gaz que vous économisez en utilisant de l\'eau chaude du chauffe-eau au lieu du chauffage au gaz. Calculé sur la base de l\'énergie sortant du chauffe-eau au moment du puisage, avec 1 m³ de gaz = 9,77 kWh.',
+        'shower-behavior-range': 'Fourchette basée sur le comportement de douche',
+        'economical-shower': 'Douche économique',
+        'average-shower': 'Moyen',
+        'comfortable-shower': 'Confortable',
+        'financial-analysis': 'Analyse Financière (Variateur Nymo)',
+        'value-saved-gas': 'Valeur du gaz économisé (PV):',
+        'lost-feed-in': 'Injection perdue:',
+        'net-profit-year': 'Bénéfice Net par An:',
+        'extra-gas-dwtw': 'Économie de gaz supplémentaire DWTW:',
+        'personal-suggestions': 'Suggestions Personnelles',
+        'months': ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
+        
+        // Tabs
+        'tab-chart': 'Graphique',
+        'tab-table': 'Tableau',
+        'tab-projection': 'Projection 20 ans',
+        'chart-explanation': '<strong>Explication:</strong> Ce graphique montre la quantité d\'énergie solaire stockée dans le chauffe-eau par mois. Les valeurs plus élevées pendant les mois plus froids (surtout mars) sont dues au fait que l\'eau du robinet est plus froide (10°C en hiver contre 15°C en été). Par conséquent, plus d\'énergie est nécessaire pour chauffer l\'eau à la température souhaitée.',
+        
+        // Advanced Mode
+        'advanced-mode-title': 'Mode avancé et puisage',
+        'activate-advanced-mode': 'Activer le mode avancé',
+        'advanced-mode-helper': 'Utilisez les moments de puisage, le graphique de puisage et les métriques avancées pour affiner davantage le contrôle.',
+        
+        // FAQ
+        'faq-title': 'Questions fréquemment posées',
+        'faq1-q': 'Que puis-je économiser avec le Green Energy Pulse?',
+        'faq1-a': 'Vos économies dépendent de la bonne capacité (litres, en fonction de la taille du ménage et de l\'utilisation), mais un ménage moyen peut économiser plus de dizaines d\'euros par an. Pour un calcul indicatif, vous pouvez utiliser notre outil.',
+        'faq2-q': 'Pourquoi puis-je seulement sélectionner un chauffe-eau de 80L, 120L et 150L dans l\'outil de calcul?',
+        'faq2-a': 'Le Green Energy Pulse n\'est disponible qu\'en versions 80L, 120L, 150L.',
+        'faq3-q': 'Comment puis-je estimer la capacité nécessaire de mon chauffe-eau le plus précisément possible?',
+        'faq3-a': 'Itho Daalderop dispose d\'un outil, l\'outil d\'économies est disponible gratuitement, l\'outil aide à estimer les économies sur une base annuelle.',
+        'faq4-q': 'Quel chauffe-eau ai-je besoin? aide au choix de votre chauffe-eau électrique.',
+        'faq4-a': '<a href="https://ithodaalderop.compano.com/Data/Environments/000001/Attachment/Bijlage/A05_Warm%20water/A05_01_Boilers%20Groot/B01_04_PRT/01_WEB/24_0450%20Brochure%20Warm%20water%20%20Boilers%20%20E-boiler%20Commbroch%20boilers_WEB.pdf" target="_blank" style="color: var(--secondary-color); text-decoration: underline;">Brochure en ligne chauffe-eau</a>',
+        'faq5-q': 'Comment le rendement des panneaux solaires est-il calculé?',
+        'faq5-a': 'L\'outil utilise le rendement moyen des panneaux solaires aux Pays-Bas. L\'outil tient également compte de l\'orientation moyenne du toit, de l\'angle d\'inclinaison et du nombre d\'heures d\'ensoleillement aux Pays-Bas. <a href="https://www.mdpi.com/1996-1073/17/20/5154" target="_blank" style="color: var(--secondary-color); text-decoration: underline;">Recherche</a>',
+        'faq6-q': 'Je n\'ai pas de récupération de chaleur de douche, le Green Energy Pulse convient-il à ma situation?',
+        'faq6-a': 'Avec l\'outil, vous pouvez faire un calcul indicatif du rendement supplémentaire d\'une récupération de chaleur de douche. Cependant, il n\'est pas nécessaire d\'avoir une récupération de chaleur de douche: le Green Energy Pulse convient également aux situations sans récupération de chaleur de douche.',
+        'faq7-q': 'Quel tarif de gaz dois-je entrer dans l\'outil de calcul?',
+        'faq7-a': 'Le tarif annuel du gaz aux Pays-Bas varie fortement, mais attendez-vous en janvier 2026 à un prix moyen d\'environ 1,18 € à 1,33 € par m³, hors frais fixes, avec des variations selon votre fournisseur et votre contrat (fixe/variable). Pour le bon tarif, nous vous renvoyons à votre contrat actuel avec votre fournisseur d\'énergie.',
+        'faq8-q': 'Nous envisageons d\'installer des panneaux solaires supplémentaires pour plus de rentabilité avec le Green Energy Pulse, est-ce un bon investissement?',
+        'faq8-a': 'L\'ajout de panneaux solaires peut être un bon investissement pour réduire davantage les coûts énergétiques, surtout en combinaison avec le Green Energy Pulse. La rentabilité finale dépend cependant de votre installation actuelle, de l\'espace disponible sur le toit et de vos besoins énergétiques. Il est recommandé de faire appel à un installateur qualifié pour une analyse et un devis. De plus, vous pouvez utiliser notre outil pour faire un calcul indicatif des rendements possibles.',
+        'faq9-q': 'Quelle durée de douche l\'outil prend-il en compte?',
+        'faq9-a': 'L\'outil prend en compte une durée moyenne de douche de 8 minutes et le nombre moyen de litres d\'eau par personne par jour pour la douche. Cela représente 45 litres/jour. Dans l\'outil, un conseil est donné sur la base d\'une douche confortable et économe et d\'une douche confortable.',
+        'faq10-q': 'Quels sont mes coûts de réinjection pour l\'électricité solaire non utilisée',
+        'faq10-a': 'La tarification de réinjection aux Pays-Bas s\'élève en 2026 à environ 0,025 € par kWh. Il est recommandé d\'entrer votre tarif le plus récent dans l\'outil de calcul pour un calcul aussi précis que possible. Notez également que le système de compensation sera complètement supprimé le 1er janvier 2027, ce qui rendra financièrement encore plus important d\'utiliser directement autant que possible l\'électricité solaire générée.',
+        'faq11-q': 'Que signifie le pourcentage d\'autoconsommation?',
+        'faq11-a': 'Le pourcentage d\'autoconsommation indique quelle partie de l\'électricité que vous produisez vous-même (par exemple avec des panneaux solaires) vous utilisez directement dans la maison. C\'est l\'électricité que vous ne réinjectez pas dans le réseau électrique. Plus ce pourcentage est élevé, mieux c\'est pour votre porte-monnaie. L\'électricité auto-utilisée économise le prix total de l\'électricité, tandis que pour l\'électricité réinjectée, vous obtenez généralement une compensation inférieure. Avec un chauffe-eau, comme l\'utilisation d\'électricité pour l\'eau chaude, vous pouvez augmenter votre autoconsommation.',
+        
+        // Bottom Disclaimer
+        'disclaimer-bottom-title': 'Avertissement',
+        'disclaimer-bottom-text': 'Les résultats de cet outil ne sont qu\'une indication et sont basés sur des hypothèses qui peuvent ne pas s\'appliquer à votre situation. Les performances, prix, subventions et économies réels peuvent différer considérablement. Utilisez ce modèle uniquement à titre indicatif; aucun droit ne peut en être dérivé.',
+        'disclaimer-notice': '<strong>Attention:</strong> Ce modèle utilise un profil solaire fixe basé sur des données historiques. Le prix du gaz augmente automatiquement de 1,35€/m³ (2027) à 1,50€/m³ (2032) pour tenir compte de l\'impact de l\'ETS2.',
+        
+        // Oude resultaten labels (blijven bestaan voor compatibiliteit)
+        'financial-title': 'Financier',
+        'gas-price': 'Prix du gaz',
+        'electricity-price': 'Prix de l\'électricité',
+        'feed-in-tariff': 'Tarif d\'injection',
+        'results-title': 'Résultats',
+        'yearly-savings': 'Économies annuelles',
+        'gas-saved': 'Gaz économisé',
+        'co2-reduction': 'Réduction CO₂',
+        'self-consumption': 'Autoconsommation',
+        'solar-to-boiler': 'Solaire → Chauffe-eau',
+        
+        // Oude tabs (blijven bestaan voor compatibiliteit)
+        'tab-overview': 'Aperçu',
+        'tab-monthly': 'Mensuel',
+        'tab-financial': 'Financier',
+        
+        // Maanden
+        'january': 'Jan',
+        'february': 'Fév',
+        'march': 'Mar',
+        'april': 'Avr',
+        'may': 'Mai',
+        'june': 'Juin',
+        'july': 'Juil',
+        'august': 'Aoû',
+        'september': 'Sep',
+        'october': 'Oct',
+        'november': 'Nov',
+        'december': 'Déc'
+      }
+    };
+
+    // Huidige taal (standaard Nederlands)
+    let currentLang = 'nl';
+
+    // Taal wisselen functie
+    function switchLanguage(lang) {
+      currentLang = lang;
+      
+      // Update toggle UI
+      const toggle = document.getElementById('languageToggle');
+      toggle.setAttribute('data-lang', lang);
+      
+      document.querySelectorAll('.language-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.getAttribute('data-lang') === lang) {
+          option.classList.add('active');
+        }
+      });
+      
+      // Update alle vertalingen
+      updateTranslations();
+      
+      // Herbereken resultaten om dynamische teksten te updaten
+      simuleer();
+      
+      // Sla voorkeur op
+      localStorage.setItem('preferredLanguage', lang);
+    }
+
+    // Update alle teksten op de pagina
+    function updateTranslations() {
+      const t = translations[currentLang];
+      
+      // Update elementen met data-translate attribuut
+      document.querySelectorAll('[data-translate]').forEach(el => {
+        const key = el.getAttribute('data-translate');
+        if (t[key]) {
+          if (el.tagName === 'INPUT' && el.type === 'button') {
+            el.value = t[key];
+          } else {
+            el.innerHTML = t[key];
+          }
+        }
+      });
+    }
+
+    // Laad opgeslagen taalvoorkeur bij pagina laden
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedLang = localStorage.getItem('preferredLanguage');
+      // Gebruik opgeslagen taal of standaard NL
+      const initialLang = (savedLang && translations[savedLang]) ? savedLang : 'nl';
+      switchLanguage(initialLang);
+    });
+
     // Info tooltip positionering en gedrag
     document.addEventListener('DOMContentLoaded', function() {
       const infoIcons = document.querySelectorAll('.info-icon');
@@ -1190,8 +1595,10 @@
           stilstandverliesW = { 80: 36, 120: 50, 150: 57 },
           dagenPerMaand = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
           maandelijkseZonVerdeling = [2.5, 4, 8, 11.5, 13.5, 14, 13, 11, 8.5, 6, 3.5, 2],
-          solarHourProfile = [0,0,0,0,0,0,0.02,0.05,0.08,0.11,0.13,0.14,0.13,0.11,0.08,0.05,0.02,0,0,0,0,0,0,0],
-          maandenNamen = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"];
+          solarHourProfile = [0,0,0,0,0,0,0.02,0.05,0.08,0.11,0.13,0.14,0.13,0.11,0.08,0.05,0.02,0,0,0,0,0,0,0];
+      
+      // Maandnamen worden dynamisch opgehaald uit vertalingen
+      const getMaandenNamen = () => translations[currentLang]['months'];
 
             const ENERGIE_PER_M3_GAS_KWH = 9.77;
             const GAS_UNIT_LABELS = { 'per-m3': '€/m\u00b3', 'per-kwh': '€/kWh' };
@@ -1458,7 +1865,7 @@
 
     function initBerekeningSelectors() {
       if (!calcMaandSelect || !calcDagSelect || !calcUurSelect) return;
-      calcMaandSelect.innerHTML = maandenNamen.map((naam, index) => `<option value="${index}">${naam}</option>`).join('');
+      calcMaandSelect.innerHTML = getMaandenNamen().map((naam, index) => `<option value="${index}">${naam}</option>`).join('');
       calcUurSelect.innerHTML = Array.from({ length: 24 }, (_, uur) => {
         const label = `${uur.toString().padStart(2,'0')}:00`;
         return `<option value="${uur}">${label}</option>`;
@@ -1502,7 +1909,7 @@
         return;
       }
 
-      const datumLabel = `${dagIndex + 1} ${maandenNamen[maandIndex]} - ${uurIndex.toString().padStart(2,'0')}:00`;
+      const datumLabel = `${dagIndex + 1} ${getMaandenNamen()[maandIndex]} - ${uurIndex.toString().padStart(2,'0')}:00`;
       const formatWatt = (value) => `${Math.round(value)} W`;
       const formatKwh = (value) => `${value.toFixed(2).replace('.',',')} kWh`;
       const formatTemp = (value) => `${value.toFixed(1).replace('.',',')} °C`;
@@ -1927,7 +2334,9 @@
         const adviesVolume = aantalPersonen <= 2 ? 80 : (aantalPersonen <= 3 ? 120 : 150);
         suggestions.push({
           type: 'warning',
-          text: `Een <strong>${boilerVolume}L</strong> boiler levert ca. <strong>${maxPersonen} douchebeurt(en)</strong>. Dit is mogelijk te weinig voor <strong>${aantalPersonen} personen</strong>. <strong>Advies:</strong> schaaf een boiler van minimaal <strong>${adviesVolume}L</strong> aan.`
+          text: currentLang === 'nl' 
+            ? `Een <strong>${boilerVolume}L</strong> boiler levert ca. <strong>${maxPersonen} douchebeurt(en)</strong>. Dit is mogelijk te weinig voor <strong>${aantalPersonen} personen</strong>. <strong>Advies:</strong> schaaf een boiler van minimaal <strong>${adviesVolume}L</strong> aan.`
+            : `Un chauffe-eau de <strong>${boilerVolume}L</strong> fournit environ <strong>${maxPersonen} douche(s)</strong>. Cela peut être insuffisant pour <strong>${aantalPersonen} personnes</strong>. <strong>Conseil:</strong> acquérez un chauffe-eau d'au moins <strong>${adviesVolume}L</strong>.`
         });
       } else {
         // Optimale boiler suggestie (gebaseerd op standaard verbruik)
@@ -1935,7 +2344,9 @@
         if (boilerVolume !== optimalVolume) {
           suggestions.push({
             type: 'info',
-            text: `Voor <strong>${aantalPersonen} personen</strong> is een <strong>${optimalVolume}L</strong> boiler optimaal. U heeft nu ${boilerVolume}L geselecteerd.`
+            text: currentLang === 'nl'
+              ? `Voor <strong>${aantalPersonen} personen</strong> is een <strong>${optimalVolume}L</strong> boiler optimaal. U heeft nu ${boilerVolume}L geselecteerd.`
+              : `Pour <strong>${aantalPersonen} personnes</strong>, un chauffe-eau de <strong>${optimalVolume}L</strong> est optimal. Vous avez actuellement sélectionné ${boilerVolume}L.`
           });
         }
       }
@@ -2085,8 +2496,8 @@
         const waardeBespaardeNetstroom = totaalGeleverdeKwhNaarBoiler * stroomprijs;
         const gederfdeStroominkomsten = totaalGeleverdeKwhNaarBoiler * teruglevertarief;
         const gederfdeLabel = teruglevertarief >= 0
-          ? `<div><span>Gederfde teruglevering:</span> <span class="loss">- €${gederfdeStroominkomsten.toFixed(2).replace('.',',')}</span></div>`
-          : `<div><span>Gederfde teruglevering:</span> <span class="gain">+ €${Math.abs(gederfdeStroominkomsten).toFixed(2).replace('.',',')}</span></div>`;
+          ? `<div><span>${translations[currentLang]['lost-feed-in']}</span> <span class="loss">- €${gederfdeStroominkomsten.toFixed(2).replace('.',',')}</span></div>`
+          : `<div><span>${translations[currentLang]['lost-feed-in']}</span> <span class="gain">+ €${Math.abs(gederfdeStroominkomsten).toFixed(2).replace('.',',')}</span></div>`;
         nettoFinancieleWinst = waardeBespaardeNetstroom - gederfdeStroominkomsten;
         const jaarlijkseStroomkosten = totaalNetstroomVerbruikKwh * stroomprijs;
         const totaalJaarverbruik = totaalNetstroomVerbruikKwh + totaalGeleverdeKwhNaarBoiler;
@@ -2113,8 +2524,8 @@
         const waardeBespaardGas = waardePVGas + waardeDWTWGas;
         const gederfdeStroominkomsten = totaalGeleverdeKwhNaarBoiler * teruglevertarief;
         const gederfdeLabel = teruglevertarief >= 0
-          ? `<div><span>Gederfde teruglevering:</span> <span class="loss">- €${gederfdeStroominkomsten.toFixed(2).replace('.',',')}</span></div>`
-          : `<div><span>Gederfde teruglevering:</span> <span class="gain">+ €${Math.abs(gederfdeStroominkomsten).toFixed(2).replace('.',',')}</span></div>`;
+          ? `<div><span>${translations[currentLang]['lost-feed-in']}</span> <span class="loss">- €${gederfdeStroominkomsten.toFixed(2).replace('.',',')}</span></div>`
+          : `<div><span>${translations[currentLang]['lost-feed-in']}</span> <span class="gain">+ €${Math.abs(gederfdeStroominkomsten).toFixed(2).replace('.',',')}</span></div>`;
 
         nettoFinancieleWinst = waardeBespaardGas - gederfdeStroominkomsten;
         co2Besparing = bespaardGasM3 * CO2_PER_M3_GAS;
@@ -2122,15 +2533,15 @@
 
         setAnimatedValue('gas-besparing', bespaardGasM3, formatters.m3);
         const dwtwRegel = (dwtwActief && extraGasM3DWTW > 0)
-          ? `<div><span>Extra gasbesparing DWTW:</span> <span class="gain">+ €${waardeDWTWGas.toFixed(2).replace('.',',')}</span></div>`
+          ? `<div><span>${translations[currentLang]['extra-gas-dwtw']}</span> <span class="gain">+ €${waardeDWTWGas.toFixed(2).replace('.',',')}</span></div>`
           : '';
 
-        breakdownHTML = `<h3>Financiële Analyse (Nymo Dimmer)</h3>
+        breakdownHTML = `<h3>${translations[currentLang]['financial-analysis']}</h3>
         <div class="financial-breakdown">
-          <div><span>Waarde bespaard gas (PV):</span> <span class="gain">+ €${waardePVGas.toFixed(2).replace('.',',')}</span></div>
+          <div><span>${translations[currentLang]['value-saved-gas']}</span> <span class="gain">+ €${waardePVGas.toFixed(2).replace('.',',')}</span></div>
           ${dwtwRegel}
           ${gederfdeLabel}
-          <div><span>Netto Winst per Jaar:</span> <span>€${nettoFinancieleWinst.toFixed(2).replace('.',',')}</span></div>
+          <div><span>${translations[currentLang]['net-profit-year']}</span> <span>€${nettoFinancieleWinst.toFixed(2).replace('.',',')}</span></div>
         </div>`;
       }
 
@@ -2171,7 +2582,7 @@
         
         rangeElement.innerHTML = `
           <div style="margin-top: 16px;">
-            <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 32px;">Bandbreedte op basis van douchgedrag</div>
+            <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 32px;" data-translate="shower-behavior-range">${translations[currentLang]['shower-behavior-range']}</div>
             
             <!-- Visuele balk -->
             <div style="position: relative; height: 40px; background: linear-gradient(to right, #ff9800 0%, #2196f3 50%, #4caf50 100%); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
@@ -2196,9 +2607,9 @@
             
             <!-- Labels onder de balk -->
             <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 0.7rem;">
-              <span style="color: #e65100; font-weight: 600;">Zuinig douchen</span>
-              <span style="color: #0d47a1; font-weight: 600;">Gemiddeld</span>
-              <span style="color: #1b5e20; font-weight: 600;">Comfortabel</span>
+              <span style="color: #e65100; font-weight: 600;" data-translate="economical-shower">${translations[currentLang]['economical-shower']}</span>
+              <span style="color: #0d47a1; font-weight: 600;" data-translate="average-shower">${translations[currentLang]['average-shower']}</span>
+              <span style="color: #1b5e20; font-weight: 600;" data-translate="comfortable-shower">${translations[currentLang]['comfortable-shower']}</span>
             </div>
           </div>
         `;
@@ -2220,12 +2631,12 @@
           tabelBodyInner = tabelBody.querySelector('tbody');
 
       maandData.forEach((data, i) => {
-        tabelBodyInner.innerHTML += `<tr><td>${maandenNamen[i]}</td><td>${data.zonOverschot.toFixed(0)} kWh</td><td><b>${data.naarBoiler.toFixed(0)} kWh</b></td></tr>`;
+        tabelBodyInner.innerHTML += `<tr><td>${getMaandenNamen()[i]}</td><td>${data.zonOverschot.toFixed(0)} kWh</td><td><b>${data.naarBoiler.toFixed(0)} kWh</b></td></tr>`;
         chart.innerHTML += `<div class="bar-column" style="left: ${i * (100 / 12)}%">
           <div class="bar" style="height: ${(data.naarBoiler / maxMaandEnergie) * 80}%">
             <div class="bar-value">${data.naarBoiler.toFixed(0)}</div>
           </div>
-          <div class="month-label">${maandenNamen[i].substring(0,3)}</div>
+          <div class="month-label">${getMaandenNamen()[i].substring(0,3)}</div>
         </div>`;
       });
 
@@ -2233,7 +2644,7 @@
       suggestionContainer.innerHTML = breakdownHTML;
 
       if (suggestions.length > 0) {
-        suggestionContainer.innerHTML += '<h3>Persoonlijke Suggesties</h3>' +
+        suggestionContainer.innerHTML += `<h3>${translations[currentLang]['personal-suggestions']}</h3>` +
           suggestions.map(s => `
             <div class="suggestion ${s.type}">
               ${s.type === 'warning'
