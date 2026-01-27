@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Green Energy Pulse - Content Editor</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #063472 0%, #0a4a9e 100%);
+      color: white;
+      padding: 30px 40px;
+      border-bottom: 4px solid #3dc3a8;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 15px;
+      padding: 20px 40px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #dee2e6;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .toolbar input[type="file"] {
+      display: none;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: #063472;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #0a4a9e;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(6,52,114,0.3);
+    }
+
+    .btn-success {
+      background: #3dc3a8;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #35ad97;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(61,195,168,0.3);
+    }
+
+    .btn-danger {
+      background: #d6423a;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c03830;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(214,66,58,0.3);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+
+    .status {
+      margin-left: auto;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .status.loaded {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status.empty {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .tabs {
+      display: flex;
+      padding: 0 40px;
+      background: #f8f9fa;
+      border-bottom: 2px solid #dee2e6;
+    }
+
+    .tab {
+      padding: 15px 25px;
+      background: none;
+      border: none;
+      font-size: 15px;
+      font-weight: 500;
+      color: #6c757d;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tab:hover {
+      color: #063472;
+      background: rgba(6,52,114,0.05);
+    }
+
+    .tab.active {
+      color: #063472;
+      border-bottom-color: #3dc3a8;
+    }
+
+    .content-area {
+      display: none;
+      padding: 40px;
+    }
+
+    .content-area.active {
+      display: block;
+    }
+
+    .split-view {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      height: calc(100vh - 400px);
+      min-height: 500px;
+    }
+
+    .language-column {
+      display: flex;
+      flex-direction: column;
+      border: 2px solid #dee2e6;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .language-header {
+      padding: 15px 20px;
+      font-weight: 600;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .language-header.nl {
+      background: linear-gradient(135deg, #063472 0%, #0a4a9e 100%);
+      color: white;
+    }
+
+    .language-header.fr {
+      background: linear-gradient(135deg, #d6423a 0%, #e85850 100%);
+      color: white;
+    }
+
+    .language-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+
+    .text-item {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #3dc3a8;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .text-item-key {
+      font-size: 11px;
+      color: #6c757d;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-family: 'Courier New', monospace;
+      text-transform: uppercase;
+    }
+
+    .text-item-value {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .text-item-value:focus {
+      outline: none;
+      border-color: #3dc3a8;
+      box-shadow: 0 0 0 3px rgba(61,195,168,0.1);
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .faq-item {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border: 2px solid #dee2e6;
+    }
+
+    .faq-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f8f9fa;
+    }
+
+    .faq-number {
+      font-weight: 700;
+      font-size: 18px;
+      color: #063472;
+    }
+
+    .faq-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .faq-lang-section {
+      margin-bottom: 15px;
+    }
+
+    .faq-lang-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .faq-lang-label {
+      font-weight: 600;
+      font-size: 13px;
+      color: #6c757d;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .faq-lang-label.nl {
+      color: #063472;
+    }
+
+    .faq-lang-label.fr {
+      color: #d6423a;
+    }
+
+    .faq-input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .faq-input.question {
+      font-weight: 600;
+    }
+
+    .faq-input.answer {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .faq-input:focus {
+      outline: none;
+      border-color: #3dc3a8;
+      box-shadow: 0 0 0 3px rgba(61,195,168,0.1);
+    }
+
+    .add-faq-btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #3dc3a8 0%, #35ad97 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+
+    .add-faq-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(61,195,168,0.3);
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 300px;
+      padding: 10px 15px;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: #3dc3a8;
+    }
+
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      flex: 1;
+      padding: 20px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 12px;
+      border-left: 4px solid #3dc3a8;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #063472;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: #6c757d;
+      margin-top: 5px;
+    }
+
+    /* Synchronized scrolling indicator */
+    .scroll-sync-badge {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #3dc3a8;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 25px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(61,195,168,0.4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6c757d;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+    }
+
+    .change-item {
+      background: white;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .change-item.modified {
+      border-left: 4px solid #3dc3a8;
+    }
+
+    .change-item.added {
+      border-left: 4px solid #ff9e43;
+    }
+
+    .change-item.deleted {
+      border-left: 4px solid #d6423a;
+    }
+
+    .change-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f8f9fa;
+    }
+
+    .change-type {
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .change-type.modified {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .change-type.added {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .change-type.deleted {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .change-key {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: #063472;
+    }
+
+    .change-comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .change-value {
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .change-value.old {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+    }
+
+    .change-value.new {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+    }
+
+    .change-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6c757d;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🌍 Green Energy Pulse - Content Editor</h1>
+      <p>Beheer alle Nederlandse en Franse vertalingen + FAQ's in één overzicht</p>
+    </div>
+
+    <div class="toolbar">
+      <input type="file" id="fileInput" accept=".html">
+      <label for="fileInput" class="btn btn-primary">
+        📁 Laad index.html
+      </label>
+      <button class="btn btn-success" id="exportBtn" disabled>
+        💾 Download index-updated.html
+      </button>
+      <button class="btn btn-secondary" id="resetBtn">
+        🔄 Reset
+      </button>
+      <input type="text" class="search-box" id="searchBox" placeholder="🔍 Zoek op sleutel of tekst...">
+      <div class="status empty" id="status">Geen bestand geladen</div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="translations">📝 Vertalingen</button>
+      <button class="tab" data-tab="faq">❓ FAQ Beheer</button>
+      <button class="tab" data-tab="changes">🔄 Wijzigingen</button>
+    </div>
+
+    <div class="content-area active" id="translations-area">
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-value" id="totalKeys">0</div>
+          <div class="stat-label">Totaal sleutels</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="nlCount">0</div>
+          <div class="stat-label">Nederlandse vertalingen</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="frCount">0</div>
+          <div class="stat-label">Franse vertalingen</div>
+        </div>
+      </div>
+
+      <div class="split-view">
+        <div class="language-column">
+          <div class="language-header nl">
+            🇳🇱 Nederlands (NL)
+          </div>
+          <div class="language-content" id="nlContent">
+            <div class="empty-state">
+              <div class="empty-state-icon">📄</div>
+              <h3>Geen vertalingen geladen</h3>
+              <p>Klik op "Laad index.html" om te beginnen</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="language-column">
+          <div class="language-header fr">
+            🇫🇷 Français (FR)
+          </div>
+          <div class="language-content" id="frContent">
+            <div class="empty-state">
+              <div class="empty-state-icon">📄</div>
+              <h3>Aucune traduction chargée</h3>
+              <p>Cliquez sur "Laad index.html" pour commencer</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-area" id="faq-area">
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-value" id="faqCount">0</div>
+          <div class="stat-label">Totaal FAQ items</div>
+        </div>
+      </div>
+
+      <div class="faq-list" id="faqList">
+        <div class="empty-state">
+          <div class="empty-state-icon">❓</div>
+          <h3>Geen FAQ's geladen</h3>
+          <p>Laad index.html of klik op "Nieuwe FAQ toevoegen"</p>
+        </div>
+      </div>
+
+      <button class="add-faq-btn" id="addFaqBtn">
+        ➕ Nieuwe FAQ Toevoegen
+      </button>
+    </div>
+
+    <div class="content-area" id="changes-area">
+      <div class="stats">
+        <div class="stat-card" style="border-left-color: #3dc3a8;">
+          <div class="stat-value" id="changedCount">0</div>
+          <div class="stat-label">Gewijzigde items</div>
+        </div>
+        <div class="stat-card" style="border-left-color: #ff9e43;">
+          <div class="stat-value" id="addedCount">0</div>
+          <div class="stat-label">Toegevoegde items</div>
+        </div>
+        <div class="stat-card" style="border-left-color: #d6423a;">
+          <div class="stat-value" id="deletedCount">0</div>
+          <div class="stat-label">Verwijderde items</div>
+        </div>
+      </div>
+
+      <div id="changesList" style="max-height: 70vh; overflow-y: auto;">
+        <div class="empty-state">
+          <div class="empty-state-icon">🔄</div>
+          <h3>Geen wijzigingen</h3>
+          <p>Maak wijzigingen in vertalingen of FAQ's om ze hier te zien</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-sync-badge" id="scrollBadge" style="display: none;">
+    🔗 Gesynchroniseerd scrollen actief
+  </div>
+
+  <script>
+    let translations = { nl: {}, fr: {} };
+    let faqItems = [];
+    let currentFilter = '';
+    let originalTranslations = { nl: {}, fr: {} };
+    let originalFaqItems = [];
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.content-area').forEach(a => a.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab + '-area').classList.add('active');
+        
+        // Render changes when switching to changes tab
+        if (tab.dataset.tab === 'changes') {
+          renderChanges();
+        }
+      });
+    });
+
+    // File loading
+    document.getElementById('fileInput').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const text = await file.text();
+      originalHTML = text; // Store original HTML
+      parseIndexHTML(text);
+    });
+
+    function parseIndexHTML(html) {
+      try {
+        // Extract translations object
+        const translationsMatch = html.match(/const translations = ({[\s\S]*?});[\s\S]*?(?=const |function |<\/script>)/);
+        if (translationsMatch) {
+          // Clean up the matched text and evaluate it
+          const translationsCode = translationsMatch[1];
+          translations = eval('(' + translationsCode + ')');
+        }
+
+        // Extract FAQ_ITEMS if exists (new format)
+        const faqMatch = html.match(/const FAQ_ITEMS = (\[[\s\S]*?\]);/);
+        if (faqMatch) {
+          faqItems = eval('(' + faqMatch[1] + ')');
+        } else {
+          // Extract FAQ's from translations (old format: faq1-q, faq1-a, etc.)
+          faqItems = extractFAQsFromTranslations();
+        }
+
+        renderTranslations();
+        renderFAQs();
+        updateStatus();
+        document.getElementById('exportBtn').disabled = false;
+        
+        // Store original state for comparison
+        originalTranslations = JSON.parse(JSON.stringify(translations));
+        originalFaqItems = JSON.parse(JSON.stringify(faqItems));
+
+      } catch (error) {
+        alert('Fout bij het laden van het bestand: ' + error.message);
+        console.error(error);
+      }
+    }
+
+    function extractFAQsFromTranslations() {
+      const faqs = [];
+      const nlKeys = Object.keys(translations.nl || {});
+      
+      // Find all FAQ question keys (faq1-q, faq2-q, etc.)
+      const faqQuestionKeys = nlKeys.filter(key => /^faq\d+-q$/.test(key)).sort();
+      
+      faqQuestionKeys.forEach(qKey => {
+        const num = qKey.match(/\d+/)[0];
+        const aKey = `faq${num}-a`;
+        
+        faqs.push({
+          nl: {
+            question: translations.nl[qKey] || '',
+            answer: translations.nl[aKey] || ''
+          },
+          fr: {
+            question: translations.fr?.[qKey] || '',
+            answer: translations.fr?.[aKey] || ''
+          },
+          _keys: { question: qKey, answer: aKey } // Keep track of original keys
+        });
+      });
+      
+      return faqs;
+    }
+
+    function renderTranslations() {
+      const nlContent = document.getElementById('nlContent');
+      const frContent = document.getElementById('frContent');
+
+      nlContent.innerHTML = '';
+      frContent.innerHTML = '';
+
+      const keys = Object.keys(translations.nl || {});
+      
+      // Filter out FAQ keys (faq1-q, faq1-a, etc.) - those are managed in FAQ tab
+      const nonFaqKeys = keys.filter(key => !/^faq\d+-[qa]$/.test(key));
+      
+      const filteredKeys = currentFilter 
+        ? nonFaqKeys.filter(key => {
+            const nlText = (translations.nl[key] || '').toLowerCase();
+            const frText = (translations.fr[key] || '').toLowerCase();
+            const searchTerm = currentFilter.toLowerCase();
+            return key.toLowerCase().includes(searchTerm) || 
+                   nlText.includes(searchTerm) || 
+                   frText.includes(searchTerm);
+          })
+        : nonFaqKeys;
+
+      filteredKeys.forEach(key => {
+        // NL item
+        const nlItem = document.createElement('div');
+        nlItem.className = 'text-item';
+        nlItem.innerHTML = `
+          <div class="text-item-key">${key}</div>
+          <textarea class="text-item-value" data-lang="nl" data-key="${key}">${translations.nl[key] || ''}</textarea>
+        `;
+        nlContent.appendChild(nlItem);
+
+        // FR item
+        const frItem = document.createElement('div');
+        frItem.className = 'text-item';
+        frItem.innerHTML = `
+          <div class="text-item-key">${key}</div>
+          <textarea class="text-item-value" data-lang="fr" data-key="${key}">${translations.fr[key] || ''}</textarea>
+        `;
+        frContent.appendChild(frItem);
+      });
+
+      // Update event listeners for text changes
+      document.querySelectorAll('.text-item-value').forEach(textarea => {
+        textarea.addEventListener('input', (e) => {
+          const lang = e.target.dataset.lang;
+          const key = e.target.dataset.key;
+          translations[lang][key] = e.target.value;
+        });
+      });
+
+      // Update stats (excluding FAQ keys)
+      document.getElementById('totalKeys').textContent = nonFaqKeys.length;
+      document.getElementById('nlCount').textContent = nonFaqKeys.length;
+      document.getElementById('frCount').textContent = Object.keys(translations.fr || {}).filter(k => !/^faq\d+-[qa]$/.test(k)).length;
+
+      // Show scroll sync badge if content loaded
+      if (keys.length > 0) {
+        document.getElementById('scrollBadge').style.display = 'flex';
+      }
+    }
+
+    function renderFAQs() {
+      const faqList = document.getElementById('faqList');
+      
+      if (faqItems.length === 0) {
+        faqList.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">❓</div>
+            <h3>Geen FAQ's geladen</h3>
+            <p>Laad index.html of klik op "Nieuwe FAQ toevoegen"</p>
+          </div>
+        `;
+      } else {
+        faqList.innerHTML = '';
+        faqItems.forEach((faq, index) => {
+          const faqItem = document.createElement('div');
+          faqItem.className = 'faq-item';
+          faqItem.innerHTML = `
+            <div class="faq-header">
+              <div class="faq-number">FAQ #${index + 1}</div>
+              <div class="faq-actions">
+                <button class="btn btn-danger btn-small" onclick="deleteFAQ(${index})">🗑️ Verwijder</button>
+              </div>
+            </div>
+            
+            <div class="faq-lang-section">
+              <div class="faq-lang-label nl">🇳🇱 Nederlands</div>
+              <input type="text" class="faq-input question" placeholder="Vraag (NL)" value="${faq.nl?.question || ''}" 
+                     onchange="updateFAQ(${index}, 'nl', 'question', this.value)">
+              <textarea class="faq-input answer" placeholder="Antwoord (NL)" 
+                        onchange="updateFAQ(${index}, 'nl', 'answer', this.value)">${faq.nl?.answer || ''}</textarea>
+            </div>
+            
+            <div class="faq-lang-section">
+              <div class="faq-lang-label fr">🇫🇷 Français</div>
+              <input type="text" class="faq-input question" placeholder="Question (FR)" value="${faq.fr?.question || ''}"
+                     onchange="updateFAQ(${index}, 'fr', 'question', this.value)">
+              <textarea class="faq-input answer" placeholder="Réponse (FR)"
+                        onchange="updateFAQ(${index}, 'fr', 'answer', this.value)">${faq.fr?.answer || ''}</textarea>
+            </div>
+          `;
+          faqList.appendChild(faqItem);
+        });
+      }
+
+      document.getElementById('faqCount').textContent = faqItems.length;
+    }
+
+    window.updateFAQ = function(index, lang, field, value) {
+      if (!faqItems[index][lang]) {
+        faqItems[index][lang] = {};
+      }
+      faqItems[index][lang][field] = value;
+      
+      // Also update translations if keys exist
+      if (faqItems[index]._keys) {
+        const keyField = field === 'question' ? 'question' : 'answer';
+        const translationKey = faqItems[index]._keys[keyField];
+        if (translationKey && translations[lang]) {
+          translations[lang][translationKey] = value;
+        }
+      }
+    };
+
+    window.deleteFAQ = function(index) {
+      if (confirm('Weet je zeker dat je deze FAQ wilt verwijderen?')) {
+        // Remove from translations if keys exist
+        if (faqItems[index]._keys) {
+          const qKey = faqItems[index]._keys.question;
+          const aKey = faqItems[index]._keys.answer;
+          delete translations.nl[qKey];
+          delete translations.nl[aKey];
+          delete translations.fr[qKey];
+          delete translations.fr[aKey];
+        }
+        
+        faqItems.splice(index, 1);
+        renderFAQs();
+        renderTranslations(); // Update translations view too
+      }
+    };
+
+    document.getElementById('addFaqBtn').addEventListener('click', () => {
+      // Find next FAQ number
+      const existingNums = faqItems
+        .filter(f => f._keys)
+        .map(f => parseInt(f._keys.question.match(/\d+/)[0]))
+        .sort((a, b) => b - a);
+      
+      const nextNum = existingNums.length > 0 ? existingNums[0] + 1 : (faqItems.length + 1);
+      const qKey = `faq${nextNum}-q`;
+      const aKey = `faq${nextNum}-a`;
+      
+      // Add to faqItems
+      faqItems.push({
+        nl: { question: '', answer: '' },
+        fr: { question: '', answer: '' },
+        _keys: { question: qKey, answer: aKey }
+      });
+      
+      // Add to translations
+      translations.nl[qKey] = '';
+      translations.nl[aKey] = '';
+      translations.fr[qKey] = '';
+      translations.fr[aKey] = '';
+      
+      renderFAQs();
+      renderTranslations(); // Update translations view too
+    });
+
+    // Search functionality
+    document.getElementById('searchBox').addEventListener('input', (e) => {
+      currentFilter = e.target.value;
+      renderTranslations();
+    });
+
+    // Synchronized scrolling
+    const nlScroll = document.getElementById('nlContent');
+    const frScroll = document.getElementById('frContent');
+    let isScrolling = false;
+
+    nlScroll.addEventListener('scroll', () => {
+      if (!isScrolling) {
+        isScrolling = true;
+        frScroll.scrollTop = nlScroll.scrollTop;
+        setTimeout(() => isScrolling = false, 50);
+      }
+    });
+
+    frScroll.addEventListener('scroll', () => {
+      if (!isScrolling) {
+        isScrolling = true;
+        nlScroll.scrollTop = frScroll.scrollTop;
+        setTimeout(() => isScrolling = false, 50);
+      }
+    });
+
+    // Store original HTML for export
+    let originalHTML = '';
+
+    // Export functionality
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      if (!originalHTML) {
+        alert('❌ Geen originele HTML beschikbaar. Laad eerst index.html opnieuw.');
+        return;
+      }
+
+      // Create updated translations code
+      const translationsCode = `const translations = ${JSON.stringify(translations, null, 2)};`;
+      
+      // Replace translations in original HTML
+      let updatedHTML = originalHTML.replace(
+        /const translations = \{[\s\S]*?\};[\s\S]*?(?=const |function |<\/script>)/,
+        translationsCode + '\n\n    '
+      );
+
+      // Generate FAQ HTML
+      const faqHTML = faqItems.map((faq, index) => {
+        const num = index + 1;
+        const qKey = faq._keys?.question || `faq${num}-q`;
+        const aKey = faq._keys?.answer || `faq${num}-a`;
+        
+        return `    <details class="collapse-panel" style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px;">
+      <summary style="padding: 20px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-weight: 600; color: var(--primary-color);" data-translate="${qKey}">${faq.nl.question || ''}</span>
+        <svg class="collapse-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div style="padding: 0 20px 20px 20px; color: var(--text-light); line-height: 1.7;">
+        <p data-translate="${aKey}">${faq.nl.answer || ''}</p>
+      </div>
+    </details>`;
+      }).join('\n\n');
+
+      // Find and replace all FAQ items (from first <details class="collapse-panel"> to last </details> in FAQ section)
+      const faqSectionRegex = /(<h2[^>]*data-translate="faq-title"[^>]*>.*?<\/h2>\s*)((?:<details class="collapse-panel"[\s\S]*?<\/details>\s*)+)/;
+      
+      updatedHTML = updatedHTML.replace(faqSectionRegex, (match, header, oldFaqs) => {
+        return header + '\n' + faqHTML + '\n\n';
+      });
+      
+      // Create downloadable file
+      const blob = new Blob([updatedHTML], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'index-updated.html';
+      a.click();
+      URL.revokeObjectURL(url);
+
+      alert('✅ index-updated.html gedownload!\n\n📝 Alle wijzigingen (vertalingen + FAQ\'s) zijn toegepast!\n\nStappen:\n1. Hernoem je oude index.html → index-backup.html\n2. Hernoem index-updated.html → index.html\n3. Klaar!');
+    });
+
+    // Reset
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      if (confirm('Weet je zeker dat je alles wilt resetten? Alle wijzigingen gaan verloren.')) {
+        translations = { nl: {}, fr: {} };
+        faqItems = [];
+        renderTranslations();
+        renderFAQs();
+        updateStatus();
+        document.getElementById('exportBtn').disabled = true;
+        document.getElementById('scrollBadge').style.display = 'none';
+      }
+    });
+
+    function updateStatus() {
+      const status = document.getElementById('status');
+      const totalKeys = Object.keys(translations.nl || {}).filter(k => !/^faq\d+-[qa]$/.test(k)).length;
+      
+      if (totalKeys > 0) {
+        status.className = 'status loaded';
+        status.textContent = `✅ Geladen: ${totalKeys} vertalingen + ${faqItems.length} FAQ's`;
+      } else {
+        status.className = 'status empty';
+        status.textContent = 'Geen bestand geladen';
+      }
+    }
+
+    function renderChanges() {
+      const changesList = document.getElementById('changesList');
+      const changes = [];
+      
+      // Check translation changes
+      const allKeys = new Set([
+        ...Object.keys(originalTranslations.nl || {}).filter(k => !/^faq\d+-[qa]$/.test(k)),
+        ...Object.keys(translations.nl || {}).filter(k => !/^faq\d+-[qa]$/.test(k))
+      ]);
+      
+      allKeys.forEach(key => {
+        const origNL = originalTranslations.nl?.[key];
+        const origFR = originalTranslations.fr?.[key];
+        const currNL = translations.nl?.[key];
+        const currFR = translations.fr?.[key];
+        
+        if (!origNL && currNL) {
+          // Added
+          changes.push({
+            type: 'added',
+            category: 'translation',
+            key: key,
+            nl: { old: '', new: currNL },
+            fr: { old: '', new: currFR || '' }
+          });
+        } else if (origNL && !currNL) {
+          // Deleted
+          changes.push({
+            type: 'deleted',
+            category: 'translation',
+            key: key,
+            nl: { old: origNL, new: '' },
+            fr: { old: origFR || '', new: '' }
+          });
+        } else if (origNL !== currNL || origFR !== currFR) {
+          // Modified
+          changes.push({
+            type: 'modified',
+            category: 'translation',
+            key: key,
+            nl: { old: origNL || '', new: currNL || '' },
+            fr: { old: origFR || '', new: currFR || '' }
+          });
+        }
+      });
+      
+      // Check FAQ changes
+      const maxFaqs = Math.max(originalFaqItems.length, faqItems.length);
+      for (let i = 0; i < maxFaqs; i++) {
+        const origFaq = originalFaqItems[i];
+        const currFaq = faqItems[i];
+        
+        if (!origFaq && currFaq) {
+          changes.push({
+            type: 'added',
+            category: 'faq',
+            key: `FAQ #${i + 1}`,
+            nl: { old: '', new: `${currFaq.nl?.question}\n${currFaq.nl?.answer}` },
+            fr: { old: '', new: `${currFaq.fr?.question}\n${currFaq.fr?.answer}` }
+          });
+        } else if (origFaq && !currFaq) {
+          changes.push({
+            type: 'deleted',
+            category: 'faq',
+            key: `FAQ #${i + 1}`,
+            nl: { old: `${origFaq.nl?.question}\n${origFaq.nl?.answer}`, new: '' },
+            fr: { old: `${origFaq.fr?.question}\n${origFaq.fr?.answer}`, new: '' }
+          });
+        } else if (origFaq && currFaq) {
+          const nlChanged = origFaq.nl?.question !== currFaq.nl?.question || 
+                           origFaq.nl?.answer !== currFaq.nl?.answer;
+          const frChanged = origFaq.fr?.question !== currFaq.fr?.question || 
+                           origFaq.fr?.answer !== currFaq.fr?.answer;
+          
+          if (nlChanged || frChanged) {
+            changes.push({
+              type: 'modified',
+              category: 'faq',
+              key: `FAQ #${i + 1}`,
+              nl: { 
+                old: `${origFaq.nl?.question}\n${origFaq.nl?.answer}`, 
+                new: `${currFaq.nl?.question}\n${currFaq.nl?.answer}` 
+              },
+              fr: { 
+                old: `${origFaq.fr?.question}\n${origFaq.fr?.answer}`, 
+                new: `${currFaq.fr?.question}\n${currFaq.fr?.answer}` 
+              }
+            });
+          }
+        }
+      }
+      
+      // Update stats
+      const modified = changes.filter(c => c.type === 'modified').length;
+      const added = changes.filter(c => c.type === 'added').length;
+      const deleted = changes.filter(c => c.type === 'deleted').length;
+      
+      document.getElementById('changedCount').textContent = modified;
+      document.getElementById('addedCount').textContent = added;
+      document.getElementById('deletedCount').textContent = deleted;
+      
+      // Render changes
+      if (changes.length === 0) {
+        changesList.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">✅</div>
+            <h3>Geen wijzigingen</h3>
+            <p>Maak wijzigingen in vertalingen of FAQ's om ze hier te zien</p>
+          </div>
+        `;
+      } else {
+        changesList.innerHTML = changes.map(change => `
+          <div class="change-item ${change.type}">
+            <div class="change-header">
+              <div>
+                <span class="change-type ${change.type}">${
+                  change.type === 'modified' ? '🔄 Gewijzigd' :
+                  change.type === 'added' ? '➕ Toegevoegd' :
+                  '🗑️ Verwijderd'
+                }</span>
+                <span style="margin-left: 10px; color: #6c757d; font-size: 12px;">
+                  ${change.category === 'faq' ? '❓ FAQ' : '📝 Vertaling'}
+                </span>
+              </div>
+              <span class="change-key">${change.key}</span>
+            </div>
+            
+            ${change.type !== 'added' && change.nl.old ? `
+              <div style="margin-bottom: 15px;">
+                <div class="change-label">🇳🇱 Nederlands - Oud</div>
+                <div class="change-value old">${change.nl.old.replace(/\n/g, '<br>')}</div>
+              </div>
+            ` : ''}
+            
+            ${change.type !== 'deleted' && change.nl.new ? `
+              <div style="margin-bottom: 15px;">
+                <div class="change-label">🇳🇱 Nederlands - Nieuw</div>
+                <div class="change-value new">${change.nl.new.replace(/\n/g, '<br>')}</div>
+              </div>
+            ` : ''}
+            
+            ${change.type !== 'added' && change.fr.old ? `
+              <div style="margin-bottom: 15px;">
+                <div class="change-label">🇫🇷 Français - Ancien</div>
+                <div class="change-value old">${change.fr.old.replace(/\n/g, '<br>')}</div>
+              </div>
+            ` : ''}
+            
+            ${change.type !== 'deleted' && change.fr.new ? `
+              <div>
+                <div class="change-label">🇫🇷 Français - Nouveau</div>
+                <div class="change-value new">${change.fr.new.replace(/\n/g, '<br>')}</div>
+              </div>
+            ` : ''}
+          </div>
+        `).join('');
+      }
+    }
+  </script>
+</body>
+</html>
