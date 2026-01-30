@@ -247,6 +247,21 @@
       box-shadow: 0 0 0 3px rgba(61,195,168,0.1);
     }
 
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-weight: 600;
+      color: #856404;
+    }
+
+    .text-item-key.match {
+      background: #fff3cd;
+      color: #856404;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
     .faq-list {
       display: flex;
       flex-direction: column;
@@ -553,6 +568,7 @@
         🔄 Reset
       </button>
       <input type="text" class="search-box" id="searchBox" placeholder="🔍 Zoek op sleutel of tekst...">
+      <span id="searchResults" style="font-size: 13px; color: #6c757d; padding: 0 10px;"></span>
       <div class="status empty" id="status">Geen bestand geladen</div>
     </div>
 
@@ -751,6 +767,18 @@
       return faqs;
     }
 
+    function highlightText(text, searchTerm) {
+      if (!searchTerm) return text;
+      
+      // Escape special regex characters
+      const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      
+      // Create regex for case-insensitive search with word boundaries
+      const regex = new RegExp(`(${escapeRegex(searchTerm)})`, 'gi');
+      
+      return text.replace(regex, '<mark class="highlight">$1</mark>');
+    }
+
     function renderTranslations() {
       const nlContent = document.getElementById('nlContent');
       const frContent = document.getElementById('frContent');
@@ -763,33 +791,65 @@
       // Filter out FAQ keys (faq1-q, faq1-a, etc.) - those are managed in FAQ tab
       const nonFaqKeys = keys.filter(key => !/^faq\d+-[qa]$/.test(key));
       
+      let matchCount = 0;
       const filteredKeys = currentFilter 
         ? nonFaqKeys.filter(key => {
             const nlText = (translations.nl[key] || '').toLowerCase();
             const frText = (translations.fr[key] || '').toLowerCase();
             const searchTerm = currentFilter.toLowerCase();
-            return key.toLowerCase().includes(searchTerm) || 
+            const matches = key.toLowerCase().includes(searchTerm) || 
                    nlText.includes(searchTerm) || 
                    frText.includes(searchTerm);
+            
+            // Debug first 3 matches
+            if (matches && matchCount < 3) {
+              console.log(`✓ Match gevonden:`, {
+                key: key,
+                keyMatch: key.toLowerCase().includes(searchTerm),
+                nlMatch: nlText.includes(searchTerm),
+                frMatch: frText.includes(searchTerm),
+                nlSnippet: nlText.substring(0, 50) + '...'
+              });
+              matchCount++;
+            }
+            
+            return matches;
           })
         : nonFaqKeys;
 
       filteredKeys.forEach(key => {
+        const nlText = translations.nl[key] || '';
+        const frText = translations.fr[key] || '';
+        
+        // Check if key matches search
+        const keyMatches = currentFilter && key.toLowerCase().includes(currentFilter.toLowerCase());
+        const nlMatches = currentFilter && nlText.toLowerCase().includes(currentFilter.toLowerCase());
+        const frMatches = currentFilter && frText.toLowerCase().includes(currentFilter.toLowerCase());
+        
+        const keyClass = keyMatches ? 'text-item-key match' : 'text-item-key';
+        
+        // Highlight key if it matches
+        const displayKey = keyMatches ? highlightText(key, currentFilter) : key;
+        
         // NL item
         const nlItem = document.createElement('div');
         nlItem.className = 'text-item';
+        if (nlMatches) nlItem.style.borderLeftColor = '#ffc107';
         nlItem.innerHTML = `
-          <div class="text-item-key">${key}</div>
-          <textarea class="text-item-value" data-lang="nl" data-key="${key}">${translations.nl[key] || ''}</textarea>
+          <div class="${keyClass}">${displayKey}</div>
+          <textarea class="text-item-value" data-lang="nl" data-key="${key}" style="${nlMatches ? 'border-color: #ffc107; background: #fffef5;' : ''}">${nlText}</textarea>
+          ${nlMatches ? `<div style="font-size: 11px; color: #856404; margin-top: 5px;">🔍 Bevat: <mark class="highlight">${currentFilter}</mark></div>` : ''}
         `;
         nlContent.appendChild(nlItem);
 
         // FR item
         const frItem = document.createElement('div');
         frItem.className = 'text-item';
+        if (frMatches) frItem.style.borderLeftColor = '#ffc107';
         frItem.innerHTML = `
-          <div class="text-item-key">${key}</div>
-          <textarea class="text-item-value" data-lang="fr" data-key="${key}">${translations.fr[key] || ''}</textarea>
+          <div class="${keyClass}">${displayKey}</div>
+          <textarea class="text-item-value" data-lang="fr" data-key="${key}" style="${frMatches ? 'border-color: #ffc107; background: #fffef5;' : ''}">${frText}</textarea>
+          ${frMatches ? `<div style="font-size: 11px; color: #856404; margin-top: 5px;">🔍 Contient: <mark class="highlight">${currentFilter}</mark></div>` : ''}
         `;
         frContent.appendChild(frItem);
       });
@@ -807,6 +867,20 @@
       document.getElementById('totalKeys').textContent = nonFaqKeys.length;
       document.getElementById('nlCount').textContent = nonFaqKeys.length;
       document.getElementById('frCount').textContent = Object.keys(translations.fr || {}).filter(k => !/^faq\d+-[qa]$/.test(k)).length;
+
+      // Update search results count
+      const searchResultsEl = document.getElementById('searchResults');
+      if (currentFilter && filteredKeys.length > 0) {
+        searchResultsEl.textContent = `✓ ${filteredKeys.length} resultaten`;
+        searchResultsEl.style.color = '#3dc3a8';
+        searchResultsEl.style.fontWeight = '600';
+      } else if (currentFilter && filteredKeys.length === 0) {
+        searchResultsEl.textContent = '✗ Geen resultaten';
+        searchResultsEl.style.color = '#d6423a';
+        searchResultsEl.style.fontWeight = '600';
+      } else {
+        searchResultsEl.textContent = '';
+      }
 
       // Show scroll sync badge if content loaded
       if (keys.length > 0) {
@@ -923,10 +997,28 @@
       renderTranslations(); // Update translations view too
     });
 
-    // Search functionality
+    // Search functionality with debounce
+    let searchTimeout;
     document.getElementById('searchBox').addEventListener('input', (e) => {
-      currentFilter = e.target.value;
-      renderTranslations();
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        currentFilter = e.target.value.trim();
+        
+        // Debug logging
+        if (currentFilter) {
+          console.log('🔍 Zoeken naar:', currentFilter);
+          console.log('📊 Totaal keys:', Object.keys(translations.nl || {}).length);
+          console.log('📝 Voorbeeld tekst:', translations.nl['disclaimer-title']);
+        }
+        
+        renderTranslations();
+        
+        // Show results count
+        if (currentFilter) {
+          const count = document.querySelectorAll('.text-item').length / 2; // Divided by 2 (NL + FR)
+          console.log(`✅ Gevonden: ${count} resultaten voor "${currentFilter}"`);
+        }
+      }, 300); // Wait 300ms after typing stops
     });
 
     // Synchronized scrolling
